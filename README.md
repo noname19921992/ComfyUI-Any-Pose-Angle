@@ -2,146 +2,146 @@
 
 # Fisher Pose
 
-**摆好姿势，定好镜头。**
+**Set the pose. Set the camera.**
 
-在 ComfyUI 中编辑单人或双人姿势，用 Qwen Image 2.1 生成对应画面。
+Edit one- or two-person poses in ComfyUI and generate the corresponding images with Qwen Image 2.1.
 
-[下载插件](https://github.com/Work-Fisher/ComfyUI-Fisher-Pose/archive/refs/heads/main.zip) · [下载工作流](https://raw.githubusercontent.com/Work-Fisher/ComfyUI-Fisher-Pose/main/workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json)
+[Download plugin](https://github.com/Work-Fisher/ComfyUI-Fisher-Pose/archive/refs/heads/main.zip) · [Download workflow](https://raw.githubusercontent.com/Work-Fisher/ComfyUI-Fisher-Pose/main/workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json)
 
-[安装与模型](docs/installation.md) · [使用指南](docs/usage.md)
+[Installation & models](docs/installation.md) · [User guide](docs/usage.md)
 
-[新增姿势辅助工具](docs/pose-toolkit.md)：SDPose 可选识别 · 骨架微调 · 参考图对位 · 独立身材预设 · 生成历史对照
+[Pose assistance tools](docs/pose-toolkit.md): optional SDPose detection · keypoint editing · reference overlays · separate body-shape presets · generation history comparison
 
 </div>
 
-## 演示
+## Demo
 
 https://github.com/user-attachments/assets/24dc201a-d9dc-4ac7-86a8-acc9d8f6dd7c
 
-<sub>自由姿势演示。双人与新机位的生成案例见下方。</sub>
+<sub>Free-pose demonstration. See below for two-person and camera-change examples.</sub>
 
-## 从姿势到画面
+## From pose to image
 
-### 单人 · 骨架、人偶与成图
+### One person: skeleton, mannequin and result
 
-选择骨架或直接拖动人偶关节，再用人物照片生成对应姿势。
+Choose a skeleton or drag the mannequin's joints, then generate the pose using a character photo.
 
-<img src="docs/images/hero.jpg" alt="左：OpenPose骨架；中：人偶姿势；右：对应生成结果" width="100%">
+<img src="docs/images/hero.jpg" alt="Left: OpenPose skeleton; center: mannequin pose; right: generated result" width="100%">
 
 <details>
-<summary>展开完整对比：骨架、人偶、人物参考与生成结果</summary>
+<summary>Full comparison: skeleton, mannequin, character reference and result</summary>
 
-![完整姿势对比](docs/images/showcase-v2.jpg)
+![Full pose comparison](docs/images/showcase-v2.jpg)
 
 </details>
 
-### 双人 · 一张合照，分别摆姿
+### Two people: one group photo, independent poses
 
-上传完整合照，在编辑器添加第二个人。两个人偶可以分别调整动作；人物对应可在右侧交换。
+Upload the full group photo and add a second character in the editor. Pose each mannequin independently; swap character assignments in the right panel when needed.
 
 <table>
 <tr>
-<th width="30%">人物合照</th>
-<th width="30%">双人姿势</th>
-<th width="40%">生成结果</th>
+<th width="30%">Group photo</th>
+<th width="30%">Two-person pose</th>
+<th width="40%">Generated result</th>
 </tr>
 <tr>
-<td align="center"><img src="docs/images/duo-reference.png" alt="作为人物参考的完整合照" width="230"></td>
-<td align="center"><img src="docs/images/duo-pose.png" alt="左侧平举双臂、右侧举手的人偶姿势" width="230"></td>
-<td align="center"><img src="docs/images/duo-result.png" alt="对应双人姿势的生成结果" width="320"></td>
+<td align="center"><img src="docs/images/duo-reference.png" alt="Full group photo used as the character reference" width="230"></td>
+<td align="center"><img src="docs/images/duo-pose.png" alt="Left mannequin with arms extended; right mannequin waving" width="230"></td>
+<td align="center"><img src="docs/images/duo-result.png" alt="Generated result following the two-person pose" width="320"></td>
 </tr>
 </table>
 
-<sub>完整合照输入，不需要手动裁切。身份对应依赖模型理解，复杂遮挡与细微动作仍可能需要调整。</sub>
+<sub>The full group photo is used without manual cropping. Identity mapping depends on the model; complex occlusions and subtle poses may need adjustments.</sub>
 
-### 多视角 · 同一姿势，改变镜头
+### Multiple views: keep the pose, change the camera
 
-先生成正面姿势，再通过 AnyAngle 换机位。下方标签表示编辑器设定的镜头角度。
+Generate the front pose first, then change the camera with AnyAngle. The labels below show the camera angles set in the editor.
 
 <table>
-<tr><th width="33%">正面</th><th width="33%">右侧 45°</th><th width="33%">右侧 90°</th></tr>
+<tr><th width="33%">Front</th><th width="33%">45° right</th><th width="33%">90° right</th></tr>
 <tr>
-<td><img src="docs/images/angle-front.png" alt="正面姿势结果" width="280"></td>
-<td><img src="docs/images/angle-45.png" alt="镜头设为右侧45度后的生成结果" width="280"></td>
-<td><img src="docs/images/angle-90.png" alt="镜头设为右侧90度后的生成结果" width="280"></td>
+<td><img src="docs/images/angle-front.png" alt="Front pose result" width="280"></td>
+<td><img src="docs/images/angle-45.png" alt="Result with the camera set to 45 degrees right" width="280"></td>
+<td><img src="docs/images/angle-90.png" alt="Result with the camera set to 90 degrees right" width="280"></td>
 </tr>
 </table>
 
-<sub>实际生成结果；镜头与姿势跟随不保证逐像素一致，背面及遮挡部分由模型推测。换机位需要额外模型。</sub>
+<sub>Actual generated results. Camera and pose matching is not pixel-exact; hidden and rear surfaces are inferred by the model. Camera changes require additional models.</sub>
 
-## 三步上手
+## Get started in three steps
 
-| 1 · 选人物 | 2 · 摆姿势、定镜头 | 3 · 应用并生成 |
+| 1 · Choose characters | 2 · Pose and set the camera | 3 · Apply and generate |
 |---|---|---|
-| 默认分别上传两张单人照，也可切换为合照或单人 | 选预设、拖关节；需要时切到「定镜头」 | 查看机位预览，再运行生成 |
+| Upload two individual photos by default, or switch to a group photo or one person | Choose presets and drag joints; switch to Camera when needed | Check the camera preview, then generate |
 
-先按 [安装指南](docs/installation.md) 准备环境，导入唯一的最新版工作流 [【Work-Fisher】无限姿势+无限视角（支持双人）.json](workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json)。
+Follow the [installation guide](docs/installation.md), then import the single current workflow: [Fisher poses and camera angles, with two-person support](workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json).
 
-- **两张单人照已接好**：分别在「人物 1」「人物 2」上传照片。人偶 1 张开双臂、人偶 2 挥手，姿势参考已内置，无需拷贝作者的 input 文件。合照和单人用法见[人物输入方式](docs/usage.md#人物输入方式)。
-- **多角度开关关闭**：只生成正面人物姿势图，仅需基础模型。
-- **多角度开关开启**：按保存的镜头运行完整流程；只改镜头时复用上一次正面结果与 3D 重建。
-- **输出尺寸**：上方两个整数常量分别控制宽、高，与编辑器内的人偶图尺寸独立。
-- **再生成一张**：姿势与镜头不变，再点「应用并生成」会更新正面种子。
+- **Two individual photo inputs are connected**: upload photos in Character 1 and Character 2. Mannequin 1 has open arms and mannequin 2 waves. Pose references are embedded; no files from the author's input folder are needed. See [character input modes](docs/usage.md#character-input-modes) for group-photo and single-person use.
+- **Camera change off**: generate only the front pose, using the base models.
+- **Camera change on**: run the full pipeline using the saved camera. Camera-only changes reuse the previous front result and 3D reconstruction.
+- **Output size**: the two integer constants above the workflow control width and height independently of the editor's mannequin image size.
+- **Generate another variation**: with pose and camera unchanged, Apply & generate updates the front-stage seed.
 
 <details>
-<summary>查看编辑器布局与操作说明</summary>
+<summary>Editor layout and controls</summary>
 
-![编辑器布局示意（早期界面，按钮以当前版本为准）](docs/images/studio-editor.jpg)
+![Editor layout from an earlier release; refer to the current interface for button names](docs/images/studio-editor.jpg)
 
-左侧选姿势，中间编辑人偶，右侧调整镜头、关节、体型和比例。摆姿势时拖空白处观察，不会改变已设定的拍摄镜头。
+Choose poses on the left, edit mannequins in the center, and adjust camera, joints, body shape and proportions on the right. Orbiting empty space in Pose mode changes the editing view while preserving the output camera.
 
-[完整操作说明](docs/usage.md)
+[Full user guide](docs/usage.md)
 
 </details>
 
-## 功能一览
+## Features
 
-| 姿势编辑 | 镜头与构图 | 素材与复用 |
+| Pose editing | Camera & framing | Assets & reuse |
 |---|---|---|
-| 单人 / 双人独立调整 | 正面、侧面、俯视、仰视 | 29 个常用姿势 |
-| 拖关节、调手势与身体比例 | 编辑观察与拍摄机位分离 | 209 张内置骨架 |
-| 照片 → 骨骼预览 → 应用姿势 | 自动撑满、镜头远近与平移 | 保存姿势与个人图库 |
-| 默认开启骨骼参考 | 参考图尺寸与输出尺寸独立 | 应用即显示人偶预览 |
+| Independent editing for one or two people | Front, side, high and low views | 29 common poses |
+| Joint dragging, hand gestures and body proportions | Separate editing view and output camera | 209 built-in skeleton images |
+| Photo → keypoint preview → apply pose | Auto-fit, zoom and pan | Saved poses and a personal library |
+| Skeleton reference enabled by default | Independent reference and output sizes | Mannequin preview immediately after applying |
 
-照片识别需要可选的 DWPose 插件与权重。[依赖与下载](docs/installation.md#照片识别姿势可选)
+The interface follows ComfyUI's language setting and supports English and Chinese. Photo detection requires the optional DWPose plugin and weights. [Dependencies and downloads](docs/installation.md#pose-detection-from-photos-optional)
 
-## 安装与下载
+## Installation and downloads
 
-| 你要做什么 | 从这里开始 |
+| Task | Start here |
 |---|---|
-| 第一次安装 | [安装插件与环境](docs/installation.md#安装与依赖插件) |
-| 单人或双人摆姿出图 | [4 个基础模型：下载与放置目录](docs/installation.md#基础生图模型单人双人都需要) |
-| 生成新的镜头角度 | [追加 6 个机位模型](docs/installation.md#换机位追加模型) |
-| 上传照片识别姿势 | [识别插件与 2 个检测权重](docs/installation.md#照片识别姿势可选) |
-| 从旧版本升级 | [需要更新什么、哪些模型可以复用](docs/installation.md#老用户升级需要重新下载什么) |
+| First installation | [Plugin and environment setup](docs/installation.md#installation-and-dependencies) |
+| Generate one- or two-person poses | [Four base models and their folders](docs/installation.md#base-generation-models-required-for-one-or-two-people) |
+| Generate new camera angles | [Six additional camera-change models](docs/installation.md#additional-camera-change-models) |
+| Detect poses from photos | [Detection plugin and two detector weights](docs/installation.md#pose-detection-from-photos-optional) |
+| Upgrade an existing setup | [What to update and which models to reuse](docs/installation.md#upgrading-what-needs-to-be-downloaded-again) |
 
-**老用户注意：更新插件后重新导入新版工作流，重启 ComfyUI 并刷新浏览器。** 已有且完整的同版本模型无需重复下载。
+**After updating the plugin, import the current workflow, restart ComfyUI and refresh the browser.** Complete model files of the same version can be reused.
 
-机位校准更新需要新版工作流中的 `camera_latent` 连线，解决部分重建转角与预览不符、换机位后仍接近正面的问题；详见[升级说明](docs/installation.md#老用户升级需要重新下载什么)。
+The camera calibration update requires the new workflow's `camera_latent` connection. It addresses cases where the reconstructed view disagrees with the preview or remains near the front despite a camera change. See [upgrade instructions](docs/installation.md#upgrading-what-needs-to-be-downloaded-again).
 
-[常见问题](docs/usage.md#常见问题) · [已知限制](docs/usage.md#已知限制) · [原自由视角模式](docs/自由视角详细说明.md)
+[Troubleshooting](docs/usage.md#troubleshooting) · [Known limitations](docs/usage.md#known-limitations) · [Original free-angle mode](docs/自由视角详细说明.md)
 
-## 致谢
+## Credits
 
-这个插件的自由姿势模式建立在以下开源工作之上，感谢各位作者的付出：
+Free-pose mode builds on the following open-source projects:
 
-- **[VNCCS Utils](https://github.com/AHEKOT/ComfyUI_VNCCS_Utils) · [MiuProject / AHEKOT](https://github.com/AHEKOT)**：提供了 Pose Studio 人偶核心（`PoseViewerCore`、IK、截图）、MakeHuman 人体包加载、手部预设，以及 **[VNCCS PoseStudio QI2.1 LoRA](https://huggingface.co/MIUProject/VNCCS_PoseStudio_QI2.1)** 和它的训练约定（人偶 = image1，人物 = image2，`Draw character from image2`）。如果没有这套人偶和 LoRA，就没有这个自由姿势模式。代码以 MIT 许可随本仓库分发于 `web/vnccs/`，改动说明见该目录的 README。欢迎去原仓库点个星。
-- **[MakeHuman](http://www.makehumancommunity.org/)**：人体网格与形体数据（CC0 1.0）。
-- **[Qwen Image 2.1](https://github.com/QwenLM/Qwen-Image-2.1)**：生图模型，以及 [prompt_rewrite](https://github.com/QwenLM/Qwen-Image-2.1/tree/main/prompt_rewrite) 编辑指令规范（用于自由视角模式）。
-- **[three.js](https://threejs.org/)**：3D 渲染（MIT）。
-- **[ControlNet](https://github.com/lllyasviel/ControlNet)**：OpenPose 骨架的配色与连接顺序参考。
-- **[ComfyUI-qwenmultiangle](https://github.com/jtydhr88/ComfyUI-qwenmultiangle)**：视角分档与镜头词汇参考。
-- **[QI 2.1 AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) · lilylilith**：换机位 LoRA；**[TripoSplat](https://github.com/VAST-AI-Research/TripoSplat) · VAST**：单图生成 3D 高斯溅射；**[AnyAngle Studio · T8](https://github.com/T8mars/Comfyui-Qwen-Image-2.1-MultiAngle-T8)**：AnyAngle 图片顺序与用法的参考。
-- **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**：插件运行的平台。
+- **[VNCCS Utils](https://github.com/AHEKOT/ComfyUI_VNCCS_Utils) · [MiuProject / AHEKOT](https://github.com/AHEKOT)**: the Pose Studio mannequin core (`PoseViewerCore`, IK and capture), MakeHuman body-pack loading, hand presets, and the **[VNCCS PoseStudio QI2.1 LoRA](https://huggingface.co/MIUProject/VNCCS_PoseStudio_QI2.1)** with its training convention: mannequin = image1, character = image2, `Draw character from image2`. These components make free-pose mode possible. The MIT-licensed code is distributed in `web/vnccs/`; local changes are listed in its README. Please consider supporting the original repository.
+- **[MakeHuman](http://www.makehumancommunity.org/)**: body meshes and shape data, CC0 1.0.
+- **[Qwen Image 2.1](https://github.com/QwenLM/Qwen-Image-2.1)**: image generation and the [prompt_rewrite](https://github.com/QwenLM/Qwen-Image-2.1/tree/main/prompt_rewrite) editing conventions used by free-angle mode.
+- **[three.js](https://threejs.org/)**: 3D rendering, MIT.
+- **[ControlNet](https://github.com/lllyasviel/ControlNet)**: OpenPose skeleton colors and connection order.
+- **[ComfyUI-qwenmultiangle](https://github.com/jtydhr88/ComfyUI-qwenmultiangle)**: camera angle bins and terminology.
+- **[QI 2.1 AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) · lilylilith**: camera-change LoRA; **[TripoSplat](https://github.com/VAST-AI-Research/TripoSplat) · VAST**: single-image 3D Gaussian splat reconstruction; **[AnyAngle Studio · T8](https://github.com/T8mars/Comfyui-Qwen-Image-2.1-MultiAngle-T8)**: reference for AnyAngle image order and usage.
+- **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**: the host platform.
 
 <details>
-<summary>许可说明</summary>
+<summary>License information</summary>
 
-## 许可
+## License
 
-- 本插件代码：[MIT](LICENSE)。
-- `web/vnccs/`：VNCCS Utils（MIT, © 2025 MiuProject）；MakeHuman 人体包（CC0 1.0）；three.js（MIT）。
-- `web/editor/vendor/`：three.js（MIT）。
-- 使用 LoRA 和基础模型时，请遵守它们各自的许可。
+- Plugin code: [MIT](LICENSE).
+- `web/vnccs/`: VNCCS Utils (MIT, © 2025 MiuProject), MakeHuman body pack (CC0 1.0), and three.js (MIT).
+- `web/editor/vendor/`: three.js (MIT).
+- Follow the individual licenses of the LoRA and base models you use.
 
 </details>

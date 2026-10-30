@@ -1,3 +1,4 @@
+import { localizeDOM } from '../i18n.mjs';
 import {createSceneCube} from './scene-cube.mjs';
 import {renderMannequinReference} from './pose-reference.mjs?v=20260922-preview2';
 import {readSkeletonImage,fitSkeleton,fitSelectedSkeleton} from './pose-import.mjs';
@@ -9,6 +10,7 @@ import {createAvatar,normalizeLimbs,solveIK,boneLengths,moveBodyJoint} from './a
 const $=selector=>document.querySelector(selector),$$=selector=>[...document.querySelectorAll(selector)];
 const V=(...values)=>new THREE.Vector3(...values);
 const embedded=new URLSearchParams(location.search).has('embedded');
+localizeDOM(document);
 const storageKey='fisher-pose-multi-v2';
 let state=migrate(),shots=[],history=[],future=[],selectedJoint=null,toastTimer;
 let outputMode='视角＋姿态',extraPrompt='';

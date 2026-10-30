@@ -6,11 +6,12 @@ import { scalarInput, cameraEnabled, setScalarInput } from "./workflow_controls.
 import { verifyBindingRuntime } from "./binding_runtime.mjs";
 import { photoSlots, reconcilePortraits, routePortraitInputs } from "./portrait_inputs.mjs";
 import { repairPoseLinks, validateFisherLinks } from "./pose_links.mjs?v=20261010-feedback2";
+import { t, getLocale, setLocale } from "./i18n.mjs";
 
 const EDITORS = {
-    studio: { url: new URL("./editor/studio.html", import.meta.url), version: "20260922-preview2", title: "Fisher 机位与姿态编辑器",
+    studio: { url: new URL("./editor/studio.html", import.meta.url), version: "20261030-i18n1", title: "Fisher 机位与姿态编辑器",
               fields: ["scene_json", "output_mode", "width", "height", "extra_prompt"], data: "scene_json", image: "reference_image_1" },
-    freePose: { url: new URL("./editor/freepose.html", import.meta.url), version: "20261010-toolkit-hint1", title: "Fisher 姿势与镜头",
+    freePose: { url: new URL("./editor/freepose.html", import.meta.url), version: "20261030-i18n1", title: "Fisher 姿势与镜头",
                 fields: ["pose_json", "extra_prompt"], data: "pose_json", image: "reference_image" },
 };
 const FREE_POSE_NODES = ["FisherQwenFreePose", "FisherPoseImage"];
@@ -19,12 +20,40 @@ const widget = (node, name) => node?.widgets?.find(item => item.name === name);
 let activeEditor = null;
 let serializeGraph;
 
+function editorButton(node, text, callback) {
+    const button = node.addWidget('button', t(text), null, callback, { serialize: false });
+    button.fisherLabel = text;
+}
+
+function updateLanguage(value) {
+    setLocale(value);
+    for (const node of app.graph?._nodes || []) {
+        styleWorkflowControl(node);
+        for (const item of node.widgets || []) if (item.fisherLabel) item.name = t(item.fisherLabel);
+        node.setDirtyCanvas(true, true);
+    }
+    for (const frame of document.querySelectorAll('iframe[data-fisher-editor]')) {
+        frame.title = t(editorFor({ type: frame.dataset.fisherEditor }).title);
+        frame.contentWindow?.postMessage({ type: 'fisher-locale', locale: getLocale() }, location.origin);
+    }
+}
+
 function styleWorkflowControl(node) {
+    if ((node.comfyClass || node.type)?.startsWith('Fisher')) {
+        for (const name of ['output_mode', 'person_1_reference', 'person_2_reference', 'person_3_reference']) {
+            const item = widget(node, name);
+            if (item) item.options = { ...item.options, getOptionLabel: value => t(value) };
+        }
+    }
+    if (node.type === 'FisherQwenPose') {
+        const thinking = widget(node, 'thinking');
+        if (thinking) thinking.options = { ...thinking.options, on: t('思考模式：开'), off: t('思考模式：关') };
+    }
     const role = node.properties?.fisherControl;
     if (!role) return;
     const control = widget(node, "value");
     if (!control) return;
-    if (role === "enable_camera") control.options = { ...control.options, on: "开启 · 全流程", off: "关闭 · 仅姿势" };
+    if (role === "enable_camera") control.options = { ...control.options, on: t("开启 · 全流程"), off: t("关闭 · 仅姿势") };
     if (role === "width" || role === "height") control.options = { ...control.options, min: 64, max: 4096, step: 160 };
 }
 
@@ -197,9 +226,10 @@ async function openEditor(node, { autoApply = false, inputSlots = null } = {}) {
     const overlay = document.createElement("dialog");
     overlay.style.cssText = "width:96vw;max-width:1700px;height:94vh;max-height:1100px;padding:0;border:1px solid #dce3ed;border-radius:12px;background:#f4f6f8;box-shadow:0 20px 90px #0007;overflow:hidden;";
     const frame = document.createElement("iframe");
-    frame.title = editor.title;
+    frame.title = t(editor.title);
+    frame.dataset.fisherEditor = node.type;
     frame.style.cssText = "border:0;width:100%;height:100%;display:block";
-    frame.src = editor.url.href + "?embedded=1&v=" + editor.version;
+    frame.src = editor.url.href + "?embedded=1&v=" + editor.version + "&lang=" + getLocale();
     const referencePicker = document.createElement("input");
     referencePicker.type = "file";
     referencePicker.accept = "image/*";
@@ -371,6 +401,8 @@ async function openEditor(node, { autoApply = false, inputSlots = null } = {}) {
 app.registerExtension({
     name: "Fisher.PoseStudio",
     setup() {
+        updateLanguage(app.ui.settings.getSettingValue('Comfy.Locale') || navigator.language);
+        app.ui.settings.addEventListener('Comfy.Locale.change', event => updateLanguage(event.detail.value));
         const graphToPrompt = app.graphToPrompt;
         serializeGraph = graphToPrompt;
         app.graphToPrompt = async function (...args) {
@@ -442,13 +474,14 @@ app.registerExtension({
         const original = nodeType.prototype.onNodeCreated;
         nodeType.prototype.onNodeCreated = function () {
             const result = original?.apply(this, arguments);
+            styleWorkflowControl(this);
             const scene = widget(this, freePose ? "pose_json" : "scene_json");
             scene.type = "fisher_hidden";
             scene.computeSize = () => [0, -4];
             if (scene.element) scene.element.style.display = "none";
-            this.addWidget("button", freePose ? "编辑姿势与镜头" : "打开机位与姿态编辑器", null, () => { void openEditor(this).catch(error => app.extensionManager.toast.add({ severity: 'error', summary: 'Fisher Pose', detail: error.message, life: 6000 })); }, { serialize: false });
+            editorButton(this, freePose ? "编辑姿势与镜头" : "打开机位与姿态编辑器", () => { void openEditor(this).catch(error => app.extensionManager.toast.add({ severity: 'error', summary: 'Fisher Pose', detail: t(error.message), life: 6000 })); });
             this.size = freePose ? [380, 300] : nodeData.name === "FisherQwenPose" ? [420, 470] : [350, 290];
-            if (nodeData.name === 'FisherQwenFreePose') this.addWidget('button', '生成历史与对照', null, () => { void openResultHistory(this, api); }, { serialize: false });
+            if (nodeData.name === 'FisherQwenFreePose') editorButton(this, '生成历史与对照', () => { void openResultHistory(this, api); });
             return result;
         };
         if (!freePose) return;

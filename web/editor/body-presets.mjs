@@ -1,4 +1,5 @@
 // Separate shape presets: never store identity, pose, position or camera.
+import { confirmMessage as confirm, promptMessage as prompt } from '../i18n.mjs';
 const KEY = 'fisher.body-presets.v1';
 const copy = value => JSON.parse(JSON.stringify(value));
 export function shapeRecord(person) {

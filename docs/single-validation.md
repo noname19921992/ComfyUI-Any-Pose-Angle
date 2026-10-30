@@ -1,57 +1,57 @@
-# 单人姿势验证 · 2026-10-08
+# Single-person pose validation · 2026-10-08
 
-## 复现与定位
+## Reproduction and diagnosis
 
-双张单人照工作流中，将第二个 LoadImage 设为绕过，并在编辑器移除人物 2。剩余人偶双臂张开，但正面结果仍接近人物照片原来的站姿。
+In the two-individual-photo workflow, the second LoadImage was bypassed and character 2 was removed in the editor. The remaining mannequin had open arms, but the front result stayed close to the source photo's standing pose.
 
-实际 API 请求已经排除了 `reference_image_2`，保存的数据没有双人人偶，进入编码器的参考依次为单人人偶图和第一张人物照。人偶参考是正面，节点界面显示的俯视缩略图则是另存的最终镜头预览。错误已发生在正面生成阶段，不能归因于第二张照片残留或换机位。
+The actual API request already excluded `reference_image_2`, the saved state had no two-person mannequin, and the encoder received the single mannequin image followed by the first character photo. The pose reference was front-facing; the node's high-angle thumbnail was a separately saved final-camera preview. The failure occurred during front generation, not from a stale second photo or the camera-change stage.
 
-## 提示词对照
+## Prompt comparisons
 
-固定白衬衫全身人物照、带骨骼的张臂人偶图、种子 20260930。使用 Qwen Image 2.1 int8 convrot、VNCCS_QI2_PoseStudioV1.1（强度 1）、Qwen3-VL 8B、Qwen Image 2.1 VAE，25 步、CFG 1、Euler / simple。人偶图 1024×768，输出保持 1024×1024；三组均通过同一核心编码节点，不改变图片顺序或采样设置。
+Fixed inputs: full-body character photo in a white shirt, open-arm mannequin with skeleton guides, seed 20260930. Models and sampling: Qwen Image 2.1 int8 convrot, VNCCS_QI2_PoseStudioV1.1 at strength 1, Qwen3-VL 8B, Qwen Image 2.1 VAE, 25 steps, CFG 1, Euler / simple. The mannequin was 1024×768; output remained 1024×1024. All three comparisons used the same core encoder, reference order and sampling settings.
 
-| 指令 | 实际结果 |
+| Instruction | Actual result |
 |---|---|
-| 仅 `Draw character from image2` | 保留原照片站姿，双臂未张开 |
-| 此前的长单人指令（原样复测） | 保留原照片站姿，双臂未张开 |
-| 保留触发词，明确要求按 image1 重新摆 image2 中的人物 | 单人双臂张开，白衬衫和黑裤保留 |
+| Only `Draw character from image2` | Kept the original standing pose; arms did not open |
+| Previous long single-person instruction, retested unchanged | Kept the original standing pose; arms did not open |
+| Keep the trigger and explicitly repose the person in image2 to match image1 | One person with open arms; white shirt and black trousers retained |
 
-新指令在前后端保持一致：
+The updated instruction is identical in frontend and backend:
 
 ```text
 Draw character from image2. Repose the person in image2 to match image1. Preserve their appearance and the scene.
 ```
 
-这证明任务表述影响了本次样本的姿势跟随，不足以推断模型内部原因或所有动作的成功率。合照及两张单人照的指令未改动。
+This establishes that task wording affected pose following in this sample. It does not establish the model's internal mechanism or success for every action. Group-photo and two-individual-photo instructions were unchanged by this revision.
 
-## 状态回归
+## State regressions
 
-19 项 Python 测试通过，其中覆盖双人编码后切回单人、保留旧 `referenceMode=separate` 字段、连续更换人偶参考图。单人每次仅编码两张参考图，已移除的人物不进入后续编码。
+Passed 19 Python tests, including switching back to one person after encoding two, retaining a legacy `referenceMode=separate` field, and changing mannequin references repeatedly. Single-person runs encode only two references; removed characters do not enter subsequent encoding.
 
-真实无头浏览器验证：绕过第二张照片、移除人物 2、应用张臂、保存状态并重开、再应用挥手。两次 API 请求均不含第二张照片，捕获文件随动作变化，单人状态与绕过状态在重开后保留。该测试不排队生成，不修改用户保存的工作流。
+A real headless-browser test bypassed photo 2, removed character 2, applied open arms, saved and reopened the state, then applied a wave. Neither API request included photo 2. Capture files changed with the pose, and the single-person/bypass states survived reopening. This test did not queue generation or modify the user's saved workflow.
 
-随后补齐两张单人照的对称切换：按实际 API 输入判断启用照片，保存各自的人偶姿势，人数变化时重新捕获。只开第二张时，仅在本次 API 请求中将其接到必需的人物图口，工作流连线不变。再次开启两张时恢复两个人偶；一张合照模式保持原有逻辑。
+Symmetric switching for two individual photos was then added. Active photos are determined from the actual API inputs, each mannequin's pose is retained, and count changes trigger recapture. With only photo 2 enabled, that photo is routed to the required character input for the current API request without changing workflow links. Enabling both restores both mannequins. Group-photo behavior is preserved.
 
-8 项输入切换单测覆盖两个方向、单人之间直接切换、恢复双人站位、旧单人数据、合照保留与无照片拦截。真实浏览器依次验证双人 → 只开第一张 → 只开第二张 → 恢复双人 → 静音第一张 → 静音第二张 → 再次恢复双人；每一步均保存并重载工作流，核对实际照片输入、骨骼局部旋转和位移、人物编号、捕获文件及保存数据。最后关闭两张，确认排队前明确报错。世界坐标下的 IK 控件随自动构图移动，不作为动作不变的判断依据。
+Eight input-switching unit tests cover both directions, direct switching between single photos, restoring two-person positions, legacy single-person data, preserving group mode, and rejecting zero active photos. A real browser tested: pair → photo 1 only → photo 2 only → pair → mute photo 1 → mute photo 2 → pair. Each step saved and reloaded the workflow and checked actual photo inputs, local bone rotations and offsets, character numbers, capture files and saved data. Finally, both photos were disabled to verify a clear error before queuing. World-space IK handles move during auto-framing and were not used as evidence that the pose stayed unchanged.
 
-自动捕获使用编辑器已有渲染与上传流程。关闭时释放 WebGL、模型和定时器，避免连续切换保留已关闭窗口的渲染资源；捕获失败或取消时停止排队。
+Automatic capture uses the editor's existing rendering/upload path. Closing releases WebGL, model resources and timers so repeated switching does not retain closed editors' rendering resources. Failed or canceled capture stops queuing.
 
-## 修复后的真实生成
+## Actual generation after the fix
 
-重启后使用原生 Fisher 节点验证，未绕开节点的编码或图片输入逻辑：
+After restarting, the native Fisher nodes were tested without bypassing their encoder or image-input logic:
 
-| 场景 | 种子 | 观察结果 |
+| Scenario | Seed | Observed result |
 |---|---|---|
-| 原失败的男生张臂人偶 | 20260930、42 | 两次均为单个男生张开双臂 |
-| 编辑器改为挥手，再次运行 | 20260930 | 男生挥手，但另一只手仍有插兜动作，未完全符合人偶 |
-| 双张照片只启用第一张 | 20260930 | 只生成白衬衫男生，双臂张开 |
-| 关闭第一张、只启用第二张 | 20260930 | 只生成棕色外套女生，挥手 |
-| 两张重新启用 | 20260930 | 恢复男左女右，男生张臂、女生挥手，各自对应原来的人偶 |
+| Original failing open-arm male mannequin | 20260930, 42 | Both runs produced one man with open arms |
+| Change the editor pose to waving and run again | 20260930 | Man waved, but the other hand remained in a pocket and did not fully match |
+| Enable only photo 1 in the two-photo workflow | 20260930 | Only the white-shirted man, with open arms |
+| Disable photo 1 and enable only photo 2 | 20260930 | Only the woman in a brown jacket, waving |
+| Re-enable both | 20260930 | Man left/woman right restored; open arms and wave matched their original mannequins |
 
-切换三张结果来自同一次浏览器往返检查序列化的 API 请求，未手工修改人物输入或人偶图，只裁去不相关的换机位分支并设置测试保存前缀。女生仍保留书本、手指及服装细节可能变化；这里确认的是切换后的身份数量、照片来源与主要动作，不代表逐关节精确一致。
+The three switching results came from API requests serialized during one browser round trip. No photo inputs or mannequin images were manually rewritten; only unrelated camera branches were removed and test output prefixes set. The woman still held a book, and fingers or clothing details could change. This validates identity count, photo source and main action after switching, not exact joint matching.
 
-## 使用与边界
+## Usage and boundaries
 
-更新后重启 ComfyUI 后端并刷新网页；已有工作流和模型可以继续用。两张单人照模式下，打开编辑器或运行时按启用的照片自动切换人数，姿势调整后点击应用。
+Restart the ComfyUI backend and refresh the page after updating. Existing workflows and models remain usable. With two individual photos, opening the editor or running the workflow automatically selects the character count from the enabled photos. Apply after adjusting the pose.
 
-本次修复改善的是姿势指令的执行，不能保证脸部、手指、衣物和所有复杂动作完全一致。第一阶段未还原的动作仍会被后续换机位继承。
+The fix improves pose-instruction following, but cannot guarantee faces, fingers, clothing or every complex action. Subsequent camera changes inherit any first-stage pose errors.

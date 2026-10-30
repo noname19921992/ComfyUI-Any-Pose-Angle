@@ -1,50 +1,50 @@
-# 用户反馈修复验证 · 2026-10-10
+# User-feedback fix validation · 2026-10-10
 
-本轮处理构图、识别应用、镜头、姿势生成、双人站位、人体资源加载和连线校验七类问题。复杂双人多余肢体及人体比例漂移按约定排除，仍未解决。以下区分真实生图、浏览器交互和故障注入，不以任务运行成功替代画面检查。
+This round addressed seven issue groups: framing, applying detections, camera behavior, pose generation, two-person depth positioning, body-asset loading and connection validation. Complex two-person extra limbs and proportion drift were explicitly outside scope and remain unresolved. Actual image generation, browser interaction and fault injection are distinguished below; successful execution is not treated as visual correctness.
 
-| 反馈 | 修复及实测 | 验证边界 |
+| Feedback | Fix and observed validation | Boundary |
 |---|---|---|
-| 半身、特写变全身 | 正面参考原先忽略缩放和平移，现独立保存 `framing` 并用于第一阶段；换预设与重开保留手动构图。真实单人半身抬手、双人近景均已出图检查 | 人偶参考与输出宽高比差异、生成模型仍可影响裁切，不承诺逐像素一致 |
-| 识别 100% 后应用无反应 | 完整骨架应用原始坐标；缺失关节时应用可见段、保留未识别部位。真实半身检测得到 6 段可用肢体并应用，全身首次/全缓存识别、应用、重开通过。四类异常后均可重试，旧结果隐藏且禁用 | 无有效肢体时明确报错，不虚构缺失骨骼；未复现每位观众的运行环境 |
-| 镜头角度不变 | 编辑器开关同步实际工作流常量；自动撑满先同步相机矩阵，避免用上一帧视角测量人物。关闭换镜头时仍保留所定镜头。真实 60°/25°、-65°/40°、90°/0°生成检查通过 | 90°双人侧视可能发生遮挡；单图重建和重绘不等于真实几何复原 |
-| 姿势仍为原图 | 实测单人从站立改抬手、双人从合照动作改挥手/叉腰；仅换镜头不改正面姿势字符串与种子，下一次生成复用正面图 | 不能保证所有复杂姿势、服装和身份细节准确；参见既有单人/双人对照记录 |
-| 双人缺少前后站位 | 新增前后滑杆，分别设置 1.5/-1.5 后切换人物、保存、重开保持；位置进入人偶渲染 | 最终真实人物的纵深仍取决于模型理解 |
-| 文件存在却报缺失 | 新增无扩展名人体资源接口，加载带超时；仅 404 回退静态文件。重启后的真实后端 Range 请求返回 206；浏览器拦截 `.bin` 时新接口仍成功加载，网络、HTTP、解析、真实缺失分别提示 | IDM 程序本身未安装测试；使用浏览器故障注入验证相应请求行为 |
-| `pose_json` 的 `tuple index out of range` | 真实 ComfyUI 错误输出槽返回同类 400 校验异常；前端按已知 Fisher 节点语义修正后实际执行成功，排队前按当前后端 schema 检查 | 观众截图未展示完整连线，不能断言唯一根因；未知来源不猜测修复 |
+| Half-body or close-up becomes full-body | The front reference previously ignored zoom/pan. It now saves separate `framing` used in stage one. Preset changes and reopening preserve manual framing. Actual single-person half-body arm-raising and two-person close-up outputs were inspected | Aspect-ratio differences and the model can still affect cropping; no pixel-exact guarantee |
+| Apply does nothing after detection reaches 100% | Complete skeletons use raw coordinates. Partial skeletons apply visible segments and preserve undetected parts. Real half-body detection produced and applied six usable segments. First/cached full-body detection, application and reopening passed. Four injected error types allowed retry and hid/disabled stale results | No usable limbs produces an explicit error without inventing missing bones; not every user's environment was reproduced |
+| Camera angle does not change | Editor switch follows the actual workflow constant. Auto-fit updates camera matrices before measurement instead of using the previous frame. Disabling camera change preserves the chosen camera. Actual generation at 60°/25°, −65°/40° and 90°/0° was inspected | A 90° two-person side view can cause occlusion. Single-image reconstruction and repainting are not true geometry recovery |
+| Pose remains the source pose | Tested a single person changing from standing to raised arm, and a group photo changing to waving/hand-on-hip. Camera-only changes preserve the front pose string and seed, allowing reuse of the front result | Complex poses, clothing and identity details are not guaranteed; see the existing single/two-person comparisons |
+| No depth placement for two people | Added per-character depth sliders. Positions 1.5/−1.5 survived character switching, saving and reopening, and entered mannequin rendering | Final character depth still depends on model interpretation |
+| Asset exists but is reported missing | Added an extensionless body-asset route with a loading timeout; static fallback occurs only on 404. A real restarted backend returned 206 to Range requests. The new route loaded even when static `.bin` requests were blocked. Network, HTTP, parsing and actual missing-file errors are distinct | IDM itself was not installed/tested; equivalent request behavior was checked with browser fault injection |
+| `tuple index out of range` for `pose_json` | The actual ComfyUI service produced the same type of 400 validation error for an invalid output slot. After the frontend repaired known Fisher connections, execution succeeded. Current backend schemas are checked before queuing | The viewer screenshot did not show every connection, so this is not claimed as the only cause. Unknown sources are not repaired by guessing |
 
-另修正照片来源：`LoadImage` 的选中文件优先于其尚未更新的旧缩略图。故意保留旧合照缩略图、选择新的单人文件后，识别读取新文件并通过全身回归。
+Photo source selection was also corrected: LoadImage's selected filename takes precedence over an outdated preview. A test kept an old group-photo thumbnail while selecting a new single-person file; detection read the new file and passed the full-body regression.
 
-## 连续换镜头的根因与证据
+## Repeated camera changes: cause and evidence
 
-自动撑满先测量正面，再测量最终镜头。旧代码改变相机位置后未立即更新世界矩阵，下一次投影可能仍使用上个渲染角度。实际复现从 60°转 -65°后，人物缩放由约 1.374 变成 0.494，保存时又变化，导致正面缓存失效。现在统一在测量前更新相机矩阵。
+Auto-fit measures the front view and then the final camera. Previously, changing the camera position did not immediately update its world matrix, so projection could still use the previous rendered angle. Switching from 60° to −65° changed character scale from about 1.374 to 0.494; saving changed it again, invalidating the front cache. Camera matrices are now updated before all measurements.
 
-`camera_pose_stability.js` 修复前失败，修复后覆盖 60°/25°、-65°/40°、90°/0°和 0°/55°：等待真实防抖与预览、应用、重开，人物变换及正面姿势缓存均不变。自动撑满下关闭/开启换镜头也保留原相机位置、朝向、缩放和平移。
+`camera_pose_stability.js` failed before the fix. Afterward, tests covered 60°/25°, −65°/40°, 90°/0° and 0°/55°, waiting for the actual debounce/preview, applying and reopening. Character transforms and front-pose cache data stayed unchanged. Turning camera change off/on under auto-fit also preserved camera position, orientation, zoom and pan.
 
-连续真实换镜头的第二次任务，执行历史确认正面采样、解码、抠图和 TripoSplat 采样复用缓存；两次正面预览引用同一文件。第二次仅重新执行机位渲染和重绘，约 55 秒。分别检查了正面图、粗渲染和最终图，侧上方与纯侧面视角确实不同。
+For the second actual camera-change job, history confirmed cache reuse for front sampling, decoding, background removal and TripoSplat sampling. Both front previews referenced the same file. Only camera rendering and repainting reran, taking about 55 seconds. Front images, coarse renders and final outputs were inspected separately; elevated side and pure side views were visibly different.
 
-本地实测产物位于 `ComfyUI/output/fisher_feedback_oct10/`：
+Local validation outputs are in `ComfyUI/output/fisher_feedback_oct10/`:
 
-- `half_body_guides_00001_.png`：单人抬手半身；同种子骨骼说明对照。
-- `duo_crop_00001_.png`：双人近景，未恢复为全身。
-- `duo_angle60_00001_.png`：60°/25°。
-- `duo_angle_minus65_00001_.png`：-65°/40°。
-- `duo_angle90_00001_.png`：90°/0°，复用上一任务正面图与重建。
+- `half_body_guides_00001_.png`: single-person half-body raised arm; same-seed skeleton-instruction comparison.
+- `duo_crop_00001_.png`: two-person close-up, without reverting to full-body framing.
+- `duo_angle60_00001_.png`: 60°/25°.
+- `duo_angle_minus65_00001_.png`: −65°/40°.
+- `duo_angle90_00001_.png`: 90°/0°, reusing the previous front image and reconstruction.
 
-这些文件是本地验证产物，不随插件分发。骨骼参考提示词已在重启后的真实双人任务中生效；仍不保证任意风格均不会复制参考线条。
+These are local test outputs and are not distributed with the plugin. The skeleton-reference instruction was active in an actual two-person job after restarting. It does not guarantee that every style avoids copying guide lines.
 
-## 可重复测试
+## Reproducible checks
 
-- `tests/e2e/feedback_fixes.js`：构图、预设、双人前后、开关、保存重开和 API 分支。
-- `tests/e2e/camera_pose_stability.js`：自动撑满下连续换镜头及关闭/开启，检查正面缓存。
-- `tests/e2e/detect_person_pose.js`：真实 DWPose 首次与缓存、坐标、应用、重开、第二人物不变。
-- `tests/e2e/detection_recovery.js`：以真实检测结果为基础，注入缺失关节点、空人物、非法 JSON、后端错误，检查失败后重试与应用。
-- `tests/e2e/body_pack_loading.js`：真实新接口、拦截静态文件、网络中断、HTTP 500、HTML 替换、全部 404 五种情况。
-- `tests/e2e/pose_link_recovery.js`：真实服务拒绝错误槽，前端修复后实际执行。
-- Python：20 项自由姿势编码、9 项 Qwen 桥接、23 项 AnyAngle、2 项人体文件接口通过。
-- JavaScript：构图、原始/部分骨架、人体文件及超时、连线、开关、人物输入切换、后端能力、缓存与立体估算回归通过。
+- `tests/e2e/feedback_fixes.js`: framing, presets, two-person depth, switches, save/reopen and API branches.
+- `tests/e2e/camera_pose_stability.js`: repeated camera changes and off/on under auto-fit; front-cache checks.
+- `tests/e2e/detect_person_pose.js`: real first/cached DWPose detection, coordinates, application, reopening and isolation of the second character.
+- `tests/e2e/detection_recovery.js`: missing joints, empty people, invalid JSON and backend errors injected into real detection results; retry/application checks.
+- `tests/e2e/body_pack_loading.js`: actual new route plus blocked static files, network interruption, HTTP 500, HTML substitution and all-404 cases.
+- `tests/e2e/pose_link_recovery.js`: real service rejects an invalid slot; execution succeeds after frontend repair.
+- Python: 20 free-pose encoding, nine Qwen bridge, 23 AnyAngle and two body-file route tests passed.
+- JavaScript: framing, raw/partial skeletons, body files/timeouts, links, switches, photo-input switching, backend capabilities, caching and 3D-depth estimation passed regressions.
 
-浏览器验证使用隔离窗口。用户原工作流与照片未被测试覆盖。原终端无头运行器曾停在人体加载，改用隔离浏览器执行；没有修改 ComfyUI 核心来掩盖该问题。
+Browser checks used isolated windows and did not overwrite the user's workflow or photos. The original terminal headless runner stalled during body loading, so an isolated browser was used instead. ComfyUI core was not modified to conceal the issue.
 
-## 更新方式
+## Updating
 
-本轮无需重新下载模型，继续使用 `【Work-Fisher】无限姿势+无限视角（支持双人）.json`。更新插件后重启 ComfyUI 后端，再刷新网页。仅刷新网页不会加载新的 Python 接口和提示词；已打开的编辑器也不会自动替换其 JavaScript。
+No model downloads are required for this round. Continue using `【Work-Fisher】无限姿势+无限视角（支持双人）.json`. Update the plugin, restart the ComfyUI backend, then refresh the page. Refreshing alone does not load updated Python routes or prompts; an already-open editor also keeps its previously loaded JavaScript.

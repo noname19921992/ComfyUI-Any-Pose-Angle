@@ -1,31 +1,31 @@
-# 双人合照验证记录 · 2026-10-08
+# Two-person group-photo validation · 2026-10-08
 
-这次修订改善了以下样本的人数和左右对应，不代表任意合照都能锁定身份。
+This revision improves character count and left/right assignment in the samples below. It does not guarantee identity locking for arbitrary group photos.
 
-## 复现
+## Reproduction
 
-输入是一张男左女右的合照和两个带骨骼的人偶。人偶图 1024×768，输出 1024×1024；左人偶举手抬腿，右人偶手靠脸、双腿展开。
+The input was a group photo with a man on the left and a woman on the right, plus two mannequins with skeleton guides. The mannequin image was 1024×768 and the output 1024×1024. The left mannequin raised an arm and leg; the right mannequin held a hand near the face with legs apart.
 
-旧双人指令分别要求“画左侧人物、再画右侧人物”，未保留 `Draw character from image2` 开头。实际运行的前后端版本和左右指令均正确，但种子 20260930 和 139123415334490 的正面结果出现了三个人。换机位前已经出错。
+The old instruction separately requested drawing the left person and then the right person, without the `Draw character from image2` opening. The running frontend/backend versions and left/right instructions were correct, but front-stage results at seeds 20260930 and 139123415334490 contained three people. The error occurred before the camera-change stage.
 
-## 控制变量测试
+## Controlled comparisons
 
-使用 Qwen Image 2.1 int8 convrot、VNCCS_QI2_PoseStudioV1.1（强度 1）、Qwen3-VL 8B、Qwen Image 2.1 VAE，25 步、CFG 1、Euler / simple。
+Models and settings: Qwen Image 2.1 int8 convrot, VNCCS_QI2_PoseStudioV1.1 at strength 1, Qwen3-VL 8B, Qwen Image 2.1 VAE, 25 steps, CFG 1, Euler / simple.
 
-| 修改 | 种子 | 观察结果 |
+| Change | Seed | Observed result |
 |---|---|---|
-| 保留旧指令，仅让输出跟随编码后人偶画幅 | 20260930 | 两人，但女左男右，腿部未完整跟随 |
-| 仅用原始简短触发词，保持方形输出 | 20260930 | 两人，但女左男右 |
-| 原始简短触发词，输出跟随人偶画幅 | 20260930 | 身份混合、人物重影 |
-| 保留触发词，明确调整合照中现有两人，按观看者左右指定对应 | 20260930、139123415334490、42 | 三次均为两人、男左女右，跟随两种主要动作 |
-| 同上，交换对应关系 | 20260930 | 女左男右；右侧腿部动作仍偏离人偶 |
-| 同上，换为男生 T 姿、女生举手的此前姿势 | 20260930、42 | 两次均为两人、男左女右，主要动作对应 |
-| 改为手写衣服、眼镜等身份描述 | 20260930 | 两人、男左女右；未将这些照片专属描述写入插件 |
+| Keep the old instruction; size output to the encoded mannequin frame | 20260930 | Two people, but woman left/man right; legs did not fully follow |
+| Use only the original short trigger; keep square output | 20260930 | Two people, but woman left/man right |
+| Original short trigger; size output to the mannequin frame | 20260930 | Mixed identities and ghosted characters |
+| Keep the trigger, explicitly repose the two existing people, and map them by the viewer's left/right | 20260930, 139123415334490, 42 | All three runs produced two people, man left/woman right, following the two main actions |
+| Same instruction, swapped assignments | 20260930 | Woman left/man right; the right person's leg pose still differed |
+| Same instruction with the earlier man-in-T-pose/woman-waving pose | 20260930, 42 | Both runs produced two people, man left/woman right, with the main actions matched |
+| Manually describe clothing, glasses and other identity details | 20260930 | Two people, man left/woman right; photo-specific descriptions were not added to the plugin |
 
-这组对照说明旧指令是当前失败的影响因素；不能从这些样本推断模型内部原因，也不能推断所有种子的成功率。
+These comparisons show that the old instruction contributed to this failure. They do not establish the model's internal mechanism or a success rate across all seeds.
 
-## 本次改动与边界
+## Changes and boundaries
 
-只替换合照模式的任务表述：保留 VNCCS 触发词，编辑现有两人，明确使用观看者左右。交换和人偶移动仍按人物编号计算对应，前后端指令一致。完整合照不裁切，人偶图与最终输出尺寸仍独立；单人和两张单人照模式不变。
+Only the group-photo task wording was replaced: retain the VNCCS trigger, edit the existing pair, and specify the viewer's left/right. Swapping and mannequin movement still calculate assignments by character number, with matching frontend and backend instructions. The full group photo is preserved without cropping, and mannequin/output dimensions remain independent. Single-person and two-individual-photo instructions are unchanged by this revision.
 
-这仍是文字引导，不是独立的人脸身份约束。复测中还可见持物变化、鞋子或衣服变化、肢体裁边、悬空及一张背景拼接痕迹。人数和左右正确，不等于整张图质量合格。自动测试只能验证指令、参考图顺序及状态传递，视觉结果须另外检查。
+This remains textual guidance rather than an independent face-identity constraint. Retests still showed changes to held objects, shoes and clothing, cropped limbs, floating poses and one background-stitching artifact. Correct count and order do not establish overall image quality. Automated tests verify instructions, reference-image order and state transfer; visual results require separate inspection.

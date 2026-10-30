@@ -1,18 +1,18 @@
-# 机位校准验证 · 2026-10-08
+# Camera calibration validation · 2026-10-08
 
-## 原因
+## Cause
 
-双人样本中，编辑器设定约 −50°，新机位分支正常执行，最终结果却仍接近正面。旧代码固定把重建的正面当作世界水平角 90°，没有读取这次重建预测的原始机位。
+In the two-person sample, the editor was set to approximately −50° and the camera branch executed successfully, but the final result remained close to the front view. The old code treated the reconstructed front as a fixed 90° world azimuth instead of reading the source camera predicted by that reconstruction.
 
-TripoSplat 的采样结果包含几何 latent 和 `[dx, dy, dz, k, w]` 相机 token；ComfyUI 的 `VAEDecodeTripoSplat` 只解码几何，输出的 SPLAT 不保留相机 token。相机格式可对照[官方训练实现](https://github.com/runjie-yan/TripoSplat-Training/blob/master/deg/utils/render_utils.py)。
+TripoSplat sampling returns a geometry latent and a `[dx, dy, dz, k, w]` camera token. ComfyUI's `VAEDecodeTripoSplat` decodes only geometry; its SPLAT output does not retain the camera token. See the [official training implementation](https://github.com/runjie-yan/TripoSplat-Training/blob/master/deg/utils/render_utils.py) for the camera format.
 
-当前样本的原始水平机位约为 53°。旧换算把 −50° 放到了世界角约 40°，反而很接近原始视角。新版读取同一次采样的机位，转换到渲染坐标后叠加编辑器相机；画面朝向通过四元数一同传递，避免原始机位有俯仰时丢失旋转。
+The sample's source azimuth was about 53°. The old conversion placed the requested −50° view at a world angle of about 40°, close to the source view. The updated implementation reads the camera from the same sampling result, converts it to renderer coordinates and applies the editor camera relative to it. A quaternion transfers the full orientation, including the effect of source-camera elevation.
 
-## 验证
+## Validation
 
-- 23 项单元测试通过：包括不同原始机位、正负侧转、180°、俯仰、画面朝向、尺寸、缩放、错误输入和分支选择。
-- 使用真实 ComfyUI 前端载入、保存、重开新版工作流，确认 `camera_latent` 与 SPLAT 解码使用同一份采样结果。
-- 原双人请求保持照片、姿势、模型、种子和约 −50° 镜头参数，补充机位输入后完整重跑。男生转为侧面，双人透视随粗渲染改变。
-- 同一组双人数据再测试 −90° 侧面和 45° 俯视，结果呈现相应方向变化；执行记录确认复用了正面图、TripoSplat 采样及解码，仅重跑镜头分支。
+- Passed 23 unit tests covering different source cameras, positive and negative turns, 180°, elevation, frame orientation, size, zoom, invalid inputs and branch selection.
+- Loaded, saved and reopened the updated workflow in the actual ComfyUI frontend. Confirmed that `camera_latent` and SPLAT decoding use the same sampling result.
+- Reran the original two-person request with unchanged photos, pose, models, seed and approximately −50° camera parameters after adding the camera input. The man turned sideways and the pair's perspective changed with the coarse render.
+- Tested the same pair at −90° side view and 45° elevation. The results changed in the corresponding directions. Execution history confirmed reuse of the front image, TripoSplat sampling and decoding; only the camera branch reran.
 
-这些验证说明机位基准和数据传递已修正，不代表最终生成图具有测量级的角度精度。当前样本第一阶段已有动作偏差，单图重建也会推测遮挡部分和双人深度；AnyAngle 可能改变细节或肢体。后续换机位仍会继承这些误差。
+These checks validate the camera reference frame and data flow, not measurement-grade angular accuracy in generated images. The first-stage pose already differed from the target, and single-image reconstruction infers hidden surfaces and relative depth between people. AnyAngle can change details or limbs. Subsequent camera changes inherit these errors.

@@ -1,4 +1,5 @@
 // Read the actual completed prompt so previews and detector jobs cannot become final results.
+import { localizeDOM } from './i18n.mjs';
 export function dependsOn(prompt, start, target, seen = new Set()) {
     start = String(start); target = String(target);
     if (start === target) return true;
@@ -52,7 +53,8 @@ export async function openResultHistory(node, api) {
     const style = document.createElement('style');
     style.textContent = '.fisher-result-history::backdrop{background:#101827aa}.fisher-result-history button{font:inherit;border:1px solid #dbe2ef;border-radius:9px;padding:9px 14px;color:#253652;background:#fff;cursor:pointer}.fisher-result-history button:hover{background:#e9efff;border-color:#879fea}.fisher-result-history button:disabled{opacity:.45;cursor:not-allowed}.fisher-result-history [data-use]{background:#3157d5;color:white;margin-right:8px}.fisher-result-history [data-status],.fisher-result-history [data-detail]{color:#5f6e85;line-height:1.6}.fisher-result-history [data-list] button:focus{outline:2px solid #3157d5}';
     dialog.append(style);
-    const close = () => { dialog.close(); dialog.remove(); };
+    const stopLocalization = localizeDOM(dialog);
+    const close = () => { stopLocalization(); dialog.close(); dialog.remove(); };
     $('[data-close]').onclick = close;
     dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
     document.body.append(dialog); dialog.showModal();

@@ -1,114 +1,118 @@
-# 使用指南
+# User guide
 
-[返回首页](../README.md) · [安装与模型下载](installation.md)
+[Home](../README.md) · [Installation and model downloads](installation.md)
 
-本次构图、骨骼应用与镜头开关的验证范围见[反馈修复记录](feedback-validation.md)。
+See [feedback fix validation](feedback-validation.md) for the framing, skeleton-application and camera-switch checks.
 
-新增的 SDPose 选择、二维骨架修正、参考图叠加、身材预设、生成历史与继续编辑，见[姿势辅助工具](pose-toolkit.md)。DWPose 仍是默认识别方式；SDPose 是可选下载。
+For optional SDPose detection, 2D keypoint editing, reference overlays, body presets, generation history and continued editing, see [pose assistance tools](pose-toolkit.md). DWPose remains the default; SDPose is an optional download.
 
-## 能做什么
+The interface follows **Settings → Language** in ComfyUI, including node names/ports, editors, status messages and generation history. Switching preserves current edits, workflow data and custom prompts. After upgrading, restart ComfyUI and refresh once to load node translations.
 
-| 模式 | 节点 | 一句话 |
+## What the plugin does
+
+| Mode | Node | Purpose |
 |---|---|---|
-| **自由姿势** | `Fisher Qwen2.1 自由姿势` | 1–2 人任意摆姿：真人比例 3D 人偶 + VNCCS PoseStudio LoRA，把参考图里的人物重画成新姿势 |
-| **姿势 + 新机位** | 自由姿势 + `Fisher AnyAngle 机位` | 先按正面摆好姿势出图，再用 TripoSplat 变成 3D、按编辑器里设的机位重绘（AnyAngle LoRA），按需自动换机位，只保存最终图像 |
-| **通用人偶图** | `Fisher 人偶姿态图（通用）` | 只输出人偶图和提示词，不接 clip / vae，可以当姿势参考接进任何编辑模型的工作流（例如 Qwen Image 2511） |
-| **自由视角** | `Fisher Qwen2.1 人物与姿态编码` | 1–3 人共用机位：转镜头、改站位与动作，中文编辑指令，可接 PE 扩写（[详细说明](自由视角详细说明.md)） |
+| Free pose | Fisher Qwen 2.1 Free Pose | Edit one- or two-person poses with the VNCCS mannequin and generate through Qwen Image 2.1 |
+| Pose + new camera | Free Pose + Fisher AnyAngle Camera | Generate the front pose, reconstruct it with TripoSplat, then repaint the editor's camera view with AnyAngle. Camera changes run when needed; only the final result is saved |
+| Mannequin reference only | Fisher Mannequin Pose Image (Universal) | Output a mannequin image and prompt without CLIP/VAE, for connection to an image-editing workflow |
+| Original free-angle mode | Fisher Qwen 2.1 Character & Pose Encode / Fisher Pose & Camera | Shared camera and independent poses/positions for 1–3 people, with Chinese edit instructions and optional PE expansion; see the [detailed free-angle guide](自由视角详细说明.md) |
 
-### 自由姿势亮点
+## Free-pose controls
 
-- **双人优先用合照**：上传一张双人合照，点「＋ 第二个人」。默认原图左侧人物绑定人偶 1、右侧人物绑定人偶 2；在「人物对应」里可交换。完整合照作为 image2 送入模型，不裁切；通过提示词指定原图左右人物与人偶的对应关系。移动人偶或转镜头不会重新分配身份。两张单人照是可选模式，此时才连接 `reference_image_2`。合照人物的对应依赖模型理解提示词，并非人脸锁定。
-- **真人比例人偶**：采用 [VNCCS Pose Studio](https://github.com/AHEKOT/ComfyUI_VNCCS_Utils) 的 MakeHuman 人偶，和 LoRA 训练时用的人偶一致，模型认得出。
-- **上传姿势参考图**：先上传动作照片，点「识别骨骼图」，默认将关节点叠加在原图上检查；确认后点「应用到当前人偶」（双人时为「应用到人物 1 / 2」）。直接使用 DWPose 的原始坐标，重复识别命中缓存也保留坐标。动作参考不会替换工作流的人物照片；下方骨架导入入口仅用于 OpenPose 图。识别需要 [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux)。
-- **照片默认贴合原图**：保持二维肢体方向并适配人偶骨长，避免把身材比例差异直接猜成侧身或屈腿。需要前后关系时，在「深度修正」切换「估算立体」再调整。模式随姿势保存；两种模式都不能从单张图恢复唯一正确的 3D 动作。
-- **OpenPose 一键摆姿**：点一张彩色骨架图就能摆好。2D 骨架没有前后信息，插件按骨长缩短量推算深度；估错时，躯干和四肢各段都能一键在前后之间翻转。
-- **常用姿势**：29 个日常姿势（站、坐、跪、蹲、走、跑、叉腰、抱胸、挥手、敬礼、侧身、背面等），直接按 3D 方向定义，按当前骨长适配，避免从 2D 骨架猜前后深度。
-- **FISHER小彩蛋**：内置 209 张骨架图，涵盖站、坐、跪、蹲、躺、劈叉、悬空等姿势，打开就能点。
-- **我的图库**：自己的骨架图选一次就会保存下来，下次打开自动载入。
-- **我的姿势**：摆好的姿势一键保存，默认连同体型、比例、画面位置和手势一起存下来（可取消「同时保存身材比例」），下次点缩略图就能恢复，换工作流也能用。保存在 `ComfyUI/user/default/fisher_pose/poses/`，每个姿势一个 JSON 文件，可以直接拷给别人。
-- **输出骨骼**：勾选编辑器画面下方的「输出骨骼」，人偶姿态图与镜头预览会保留黄色关节点、彩色骨骼连线；每次打开编辑器默认开启，本次编辑中可以手动关闭。这张人偶图也用于模型姿势参考。
-- **自动全身入框**：默认开启，拖动和调整动作、拍摄角度时自动适配人物范围，保留边距。拍半身或特写时，在正面镜头下调整远近、平移构图，会自动关闭全身适配；此构图直接进入第一阶段姿势参考，关闭多角度也生效。换姿势和重新打开编辑器保留手动构图；「立即适配」恢复全身。
-- **双人前后站位**：选中人物后，在「人物位置与朝向」拖动「前后」滑杆。人物 1、2 分别保存位置，切换人物和重开编辑器不会交换。前后设置会影响人偶参考的透视和遮挡，最终图仍取决于模型理解。
-- **XYZ 移动轴**：在画面左上切到「移动人物 · XYZ」，拖红色 X 轴左右移动、绿色 Y 轴上下移动、蓝色 Z 轴前后移动。只移动当前选中的人物，右侧滑杆同步；开始移动时自动关闭全身适配，支持撤销、重做与保存。正面观察时 Z 轴可能与视线重合，点「斜看三轴」即可方便操作，这只改变观察方向、不改变拍摄镜头。切回「摆关节」继续调整动作；操作轴不会进入输出参考图。
-- **摆姿势 / 定镜头**：摆姿势时绕人偶观察不会改变镜头；定镜头时拖动调整拍摄方向、滚轮调整远近、右键拖动构图，预览显示最终机位的人偶示意。程序内部保留 VNCCS 正面姿势参考，转镜头后自动使用换机位链路。
-- **手势预设**：张开、并拢、握拳，外加握紧程度滑杆。
-- **比例调整**：头部大小、脖子、肩宽、躯干、上臂、小臂、大腿、小腿都可以单独拉长或缩短，姿势保持不变。
-- **两个尺寸互不影响**：人偶图尺寸在编辑器里设；工作流上方的「输出宽度」「输出高度」是两个独立整数常量，只控制生成人物图的尺寸。范围 64–4096，须为 16 的倍数；编辑器会读取这两个常量显示最终尺寸。
-- **应用即预览**：点「仅应用」或「应用并生成」后，人偶图立刻显示在节点上，不用先跑一遍工作流。
-- **工作流很小**：人偶图存成 `ComfyUI/input/fisher_pose/` 里的文件，不再以 base64 塞进工作流，避免把整张 PNG 嵌进工作流。
-- **人偶图比例跟随人物图**：新建姿势时人偶图自动取人物图的比例，也可以在「人偶图尺寸」里点「人物图」恢复。
+- **Group photos for two people**: upload a full two-person photo and click Second character. Source-left maps to mannequin 1 and source-right to mannequin 2 by default; use Character assignments to swap them. The complete photo is sent as image2 without cropping. Prompts describe the source-to-mannequin mapping. Moving mannequins or rotating the camera does not reassign identity. Two individual photos are an optional mode; only that mode uses `reference_image_2`. Group-photo mapping depends on prompt interpretation rather than face locking.
+- **Human-proportioned mannequins**: the MakeHuman mannequins from [VNCCS Pose Studio](https://github.com/AHEKOT/ComfyUI_VNCCS_Utils) match the mannequin used to train the LoRA.
+- **Drag joints**: drag hands, feet and hips for IK. Hold a joint to show rotation rings. Click other joints to select and adjust them.
+- **Detect poses from photos**: upload a pose reference, select Detect skeleton, inspect the keypoint overlay and click Apply to current mannequin (Apply to character 1/2 for two people). Raw DWPose coordinates are used directly, including cached results. This action does not replace character photos in the generation workflow. The skeleton import below is for OpenPose images only. Detection requires [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux).
+- **Match source image by default**: preserve 2D limb directions while adapting to mannequin bone lengths, rather than interpreting body-proportion differences as a turn or bent leg. Select Estimate 3D depth under Depth correction when depth is needed. The mode is saved with the pose. Neither mode uniquely recovers a true 3D action from one image.
+- **One-click OpenPose posing**: click a colored skeleton image to apply it. A 2D skeleton does not contain front/back information; the plugin estimates depth from apparent bone shortening. Flip the torso or individual limb segments if the estimate is wrong.
+- **Common Poses**: 29 everyday poses such as standing, sitting, kneeling, squatting, walking, running, hands on hips, arms crossed, waving, saluting, side and back views. These use 3D directions and adapt to current bone lengths instead of estimating depth from a 2D skeleton.
+- **Fisher Bonus Poses**: 209 built-in skeleton images, including standing, sitting, kneeling, squatting, lying, splits and suspended poses, ready to select.
+- **My Library**: select your skeleton images once to retain them for the next session.
+- **My Poses**: save the current pose, including shape, proportions, position and hand gestures by default. Disable Include body proportions if desired. Click a thumbnail to restore it, including across workflows. Poses are stored under `ComfyUI/user/default/fisher_pose/poses/`, one JSON file per pose, and can be copied to another installation.
+- **Skeleton reference**: enable the toggle below the editor viewport to retain yellow joint markers and colored skeleton lines in mannequin and camera-reference images. It defaults to on each time the editor opens and can be disabled for the current editing session. The mannequin image is also the model's pose reference.
+- **Editable system prompt**: expand References & prompts to edit System prompt. With one person and skeleton reference enabled, the default contains the repose instruction and the instruction to omit skeleton lines/joints from the result. Custom text is used as-is, followed by Additional requirements. It no longer changes automatically with character count or the skeleton toggle. Restore defaults resumes automatic instructions. Apply to save it with the workflow. Both Fisher Qwen 2.1 Free Pose and Fisher Mannequin Pose Image (Universal) use this setting.
+- **Auto-fit full body**: enabled by default. Pose and camera changes fit all characters with a margin. For half-body shots or close-ups, manually zoom/pan in the front view to turn auto-fit off. This framing affects the first-stage reference even with camera changes disabled. Pose changes and reopening preserve manual framing. Fit now restores a full-body view.
+- **Two-person depth placement**: select a character and use Depth under Position & orientation. Each character's position is stored independently and survives switching/reopening. It affects reference perspective and occlusion; the final image still depends on the model.
+- **XYZ movement axes**: switch to Move character · XYZ in the top-left viewport controls. Drag red X for horizontal, green Y for vertical and blue Z for depth movement. Only the active character moves; sliders stay synchronized. Dragging turns auto-fit off and supports undo/redo and saving. In a front view, Z can align with the viewing direction; Orbit for axes makes it easier to drag without changing the output camera. Switch back to Pose joints to continue posing. Axes are excluded from reference output.
+- **Pose / Camera**: orbiting while posing does not change the output camera. In Camera mode, drag to set the view, scroll to zoom and right-drag to pan. The preview shows the output framing. The VNCCS front pose reference is retained internally; camera rotation uses the camera-change pipeline automatically.
+- **Hand gestures**: open, flat and fist presets plus a grip-strength slider.
+- **Proportions**: independently adjust head, neck, shoulders, torso, upper arms, forearms, thighs and lower legs. The pose is preserved.
+- **Independent sizes**: set mannequin image size in the editor. The workflow's Output width and Output height integer constants control only the final generation size, from 64 to 4096 in multiples of 16. The editor reads these constants to display the final dimensions.
+- **Immediate preview**: Apply only or Apply & generate shows the mannequin on the node immediately, without running the workflow first.
+- **Small workflows**: mannequin images are stored as files under `ComfyUI/input/fisher_pose/` instead of embedding base64 PNGs in workflow JSON.
+- **Match the character aspect ratio**: a new pose adopts the connected character photo's ratio. Use Character photo under Mannequin image size to restore it later.
 
-## 人物输入方式
+## Character input modes
 
-最新版工作流默认接好两张单人照，保留双人人偶、独立宽高和多角度开关，所有节点展开。
+The current workflow connects two individual photos by default, with two mannequins, independent width/height and the camera-change switch. All nodes are expanded.
 
-| 输入方式 | 操作 |
+| Mode | Operation |
 |---|---|
-| 两张单人照（工作流默认） | 分别在「人物 1」「人物 2」上传照片；编辑器保持「两张单人照」。第一张对应人偶 1，第二张对应人偶 2 |
-| 一张合照 | 在「人物 1」上传完整合照，断开 `reference_image_2` 的连线，删除或停用第二个加载图像节点；编辑器选「一张合照」，保留两个人偶，再点击应用 |
-| 单人（从两张单人照切换） | 绕过或静音任意一个照片节点。打开编辑器或点击运行时，自动使用仍启用的照片及对应人偶；不用手动删人偶或重新接线 |
+| Two individual photos, the workflow default | Upload photos for Character 1 and Character 2. Keep Two individual photos selected in the editor. Photo 1 maps to mannequin 1; photo 2 maps to mannequin 2 |
+| One group photo | Upload the full group photo for Character 1. Disconnect `reference_image_2`, then remove or disable the second LoadImage node. Select One group photo in the editor, keep two mannequins and apply |
+| One person, switching from two individual photos | Bypass or mute either photo node. Opening the editor or running automatically uses the active photo and its mannequin; no manual mannequin removal or rewiring is needed |
 
-发布工作流内置双人人偶参考和镜头预览，导入时不需要复制作者的 `input/fisher_pose/`。应用新的姿势后，仍按正常规则保存为本机图片文件。只分享工作流且未附带图片时，接收者打开编辑器再次应用即可重建人偶参考。
+The published workflow embeds the two-person mannequin reference and camera preview. Importing does not require files from the author's `input/fisher_pose/`. Applying a new pose stores local image files as usual. If a workflow is shared without its referenced files, the recipient can open the editor and apply again to rebuild the mannequin reference.
 
-两张单人照可以反复切换：只开第一张对应人物 1，只开第二张对应人物 2，两张重新启用后自动恢复双人。关闭的人的姿势暂存在工作流内，单人编辑只更新当前人物；恢复双人时保留之前的双人站位。人数变化时会自动打开编辑器、重新捕获人偶并应用，然后继续排队。两张都关闭会提示先启用照片。一张完整合照仍使用「一张合照」模式，由用户保留两个人偶。
+Switching is repeatable: photo 1 alone uses character 1; photo 2 alone uses character 2; re-enabling both restores both mannequins. The inactive person's pose is retained in workflow state. Single-person editing updates only the active person; restoring both preserves the previous two-person placement. Count changes automatically open the editor, recapture and apply before queuing continues. With both photos disabled, generation asks for at least one enabled photo. A full group photo continues using One group photo mode, with the user keeping two mannequins.
 
-此切换由 ComfyUI 网页扩展处理。直接提交 API 的调用方仍需自行准备人数相符的人偶图，并将唯一人物图接到必需的 `reference_image` 输入。旧工作流若已手动删除人物 2 且未保存其姿势，重新启用第二张时会创建默认人偶，不能恢复已经丢失的数据。
+The ComfyUI browser extension performs this switching. Direct API clients must provide a reference with the correct character count and connect the sole character photo to required `reference_image`. If an old workflow manually removed character 2 without saving its pose, re-enabling the second photo creates a default mannequin; lost pose data cannot be recovered.
 
-两张单人照已实际测试两组动作：张开双臂与挥手能够跟随，复杂抬腿和手持物动作仍可能偏离。人物对应通过提示词引导，不承诺身份、衣服或所有肢体动作完全一致。
+Two-individual-photo generation has been checked with open arms and waving. Those major actions can follow the references; complex raised-leg or held-object poses may still differ. Mapping is prompt guidance and does not guarantee exact identity, clothing or every limb position.
 
-## 新机位（AnyAngle）
+## New camera views: AnyAngle
 
-统一使用 `workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json`：选择人物照片，点「编辑姿势与镜头」，先摆姿势，再切到「定镜头」选择拍摄角度，最后点「应用并生成」。也可点「仅应用」，稍后通过 ComfyUI 运行。
+Use `workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json`. Choose character photos, click Edit pose & camera, set poses, switch to Camera if needed and choose the angle, then Apply & generate. Apply only saves changes for a later ComfyUI run.
 
-工作流上方的「多角度开关」控制输出方式，默认关闭：
+The camera-change switch above the workflow is off by default:
 
-- **关闭 · 仅姿势**：只生成摆好姿势的正面人物图，不运行主体重建和 AnyAngle；之前保存的镜头保留。
-- **开启 · 全流程**：按编辑器保存的镜头执行主体重建和换机位，最终保存换机位结果。镜头仍是正面时，自动跳过不必要的换机位处理。
+- **Off · Pose only**: generate the front pose without reconstruction or AnyAngle. The saved camera is retained.
+- **On · Full pipeline**: reconstruct the subject and generate the saved camera view. If the camera is still front-facing, unnecessary camera-change processing is skipped.
 
-编辑器「镜头」面板也提供「换镜头生成」，与工作流多角度开关同步。关闭时预览显示实际使用的正面构图，旋转镜头仍保留，重新开启即可使用。开关和宽高常量均使用 ComfyUI 内置节点，无需额外安装忽略分组插件。正面缩放、平移直接作用于姿势参考，不启动换机位；水平或俯仰旋转才需要开启多角度。「恢复正面」重置镜头及特写构图。
+Generate with camera change in the editor's Camera panel follows the same workflow switch. When off, the preview uses the actual front framing; rotation is retained for re-enabling. The switch and width/height constants use built-in ComfyUI nodes, without extra group-bypass plugins. Front-view zoom/pan directly affects the pose reference and does not start camera reconstruction. Horizontal or vertical camera rotation requires the switch. Reset front view resets camera rotation and close-up framing.
 
-工作流顶部是生成控制，下面按颜色分为七个处理区，全部节点默认展开：左侧集中放模型加载；上排从左到右是人物输入、姿势与镜头、正面生成、最终输出；下排是主体重建和新机位生成。下排通常无需手动调整，关闭多角度或使用正面镜头时会自动停用，节点仍保持展开。跨区长连线使用 ComfyUI 原生转接点整理，不需要额外插件。
+Generation controls sit at the top. Seven colored processing areas below organize the expanded nodes: model loaders on the left; character inputs, pose/camera, front generation and final output across the top; reconstruction and new-view generation below. The lower areas usually need no manual changes. They are disabled when camera change is off or the view is front-facing, while nodes remain expanded. Long cross-area connections use native reroutes.
 
-- **只出正面，不用下载机位模型**：关闭多角度，或使用正面镜头时，换机位节点设为静音（灰色），ComfyUI 不会运行也不会检查它们，所以没有[换机位追加模型](installation.md#换机位追加模型)也能出图。打开多角度并定好新镜头后，它们会自动恢复。
-- **只换镜头，正面图不变**：镜头单独存在「Fisher 镜头」节点里，第一阶段种子固定，所以只改镜头时会直接复用上次的正面图和 3D 重建，只重跑换机位那一步。
-- **想换一张**：姿势和镜头都没改，再点「应用并生成」，会自动换一个新的正面种子。
-- 换机位的输出尺寸和正面图一致，也就是节点的 width/height。如果换机位失败，正面图仍会显示在「正面结果」预览节点里。
+- **Front poses without camera models**: when the switch is off or the camera is front-facing, camera-change nodes are muted (gray). ComfyUI neither runs nor validates them, so the [additional camera models](installation.md#additional-camera-change-models) are unnecessary. Enable the switch and choose a new angle to restore them.
+- **Change only the camera**: the Fisher Camera node stores the view independently. With the first-stage seed fixed, camera-only edits reuse the front result and 3D reconstruction, rerunning only the camera stage.
+- **Another variation**: when pose and camera are unchanged, Apply & generate chooses a new front-stage seed.
+- Camera-change output matches the front result's size, controlled by node width/height. If the camera stage fails, the front result remains available in its preview node.
 
-旧工作流和通用人偶图节点仍可摆姿势；没有连接完整生成链路时，镜头编辑入口会禁用并说明原因。ComfyUI 旧工作流内可点「打开完整工作流」加载新版，再选择人物照片。AIFISHER 画布目前仍走原有姿势图接口，不提供这里的镜头生成与直接排队按钮。
+Older workflows and the universal mannequin node still support posing. Camera controls explain why they are unavailable when the full generation chain is missing. Open full workflow loads the current workflow from an older ComfyUI workflow; select character photos afterward. AIFISHER Canvas currently uses the existing pose-image interface without camera generation or direct queuing here.
 
 <details>
-<summary>换机位编码与采样参数</summary>
+<summary>Camera-change encoding and sampling settings</summary>
 
-当前工作流使用「Fisher 换机位编码」固定接入正面结果、粗渲染、CLIP 和 VAE，内部按正面 `image1`、粗渲染 `image2` 编码，CFG 1、25 步，换机位种子固定 42。早期对照中种子 0 曾出现过曝，不能据此保证其他种子都正常。重建前会抠出主体；这不是对原背景的完整三维还原。背面和被挡住的部分由模型推测，人偶预览用于构图，不能保证最终画面逐像素一致。
+Fisher Camera Change Encode takes the front result, coarse render, CLIP and VAE. It encodes front = `image1`, coarse render = `image2`. The workflow uses CFG 1, 25 steps and fixed camera-stage seed 42. Seed 0 produced overexposure in an earlier comparison; this does not establish that every other seed is safe. Reconstruction removes the background first and does not reconstruct the complete original scene. Rear and occluded surfaces are inferred. The mannequin preview guides framing, not pixel-exact output.
 
-TripoSplat 会为每张图片同时预测几何与原始机位，不能把所有重建的正面固定当成同一个世界角度。新版从「TripoSplat 采样」的 `latent` 读取原始机位，再叠加编辑器的相机位置与朝向；俯仰后的画面朝向也一起传递。仅有解码后的 `splat` 不包含这个机位信息，所以需要额外连接 `camera_latent`。这一过程仍依赖单图重建质量，不等于测得真实拍摄机位。
+TripoSplat predicts geometry and a source camera for each image; reconstructed fronts cannot all be assigned one fixed world angle. The camera stage reads the source camera from the TripoSplat sampler's `latent`, then applies the editor camera position and orientation, including frame orientation under elevation. Decoded `splat` alone lacks that camera information, so `camera_latent` must be connected separately. Accuracy still depends on single-image reconstruction and is not a measured camera calibration.
 
-本次修复的复现、实测范围和限制见[机位校准验证](camera-validation.md)。
+See [camera calibration validation](camera-validation.md) for reproduction, tested scope and limitations.
 
-如果角度与人偶预览不一致，先对照「正面结果预览」和「按新机位渲染参考」的粗图。第一步没有还原的动作，以及重建时推测的深度、双人前后位置，会被后面的换机位继承；仅把镜头数值左右反转不能修复这些偏差。
+If the result disagrees with the mannequin preview, compare the front result and the coarse-render reference first. Pose errors in stage one and inferred depth/two-person placement in reconstruction propagate into the camera stage. Reversing the sign of camera angles alone does not fix them.
 
 </details>
 
-## 常见问题
+## Troubleshooting
 
-| 现象 | 原因和解决 |
+| Symptom | Cause and action |
 |---|---|
-| 关掉一张照片后，结果仍保留人物照原来的动作 | 已复现旧单人指令未能跟随人偶。更新插件、重启后端并刷新网页；新版修改单人指令，并按启用的照片自动切换人偶。已有工作流和模型可继续使用。查看[对照验证](single-validation.md) |
-| 转了很大角度，结果仍接近正面；或提示「缺少重建原始机位」 | 更新插件和最新版工作流，再重启 ComfyUI 后端。旧版使用固定的世界角度作为所有图片的正面，新版按每次重建预测的机位校准。旧工作流须补「TripoSplat 采样」`latent` →「按新机位渲染参考」`camera_latent` 连线，无需重新下载模型 |
-| 「加载VAE 执行失败」、日志里有 `lora key not loaded`、出图和人物图一模一样 | 可能是核心版本、模型或 LoRA 不匹配，需结合完整日志判断。确认核心支持 Qwen Image 2.1；便携版可运行 `update/update_comfyui.bat`，git 安装执行 `git pull`，更新到 0.36.0 以上 |
-| 编辑器打不开，或提示 `Failed to load Pose Studio MakeHuman asset: HTTP 404` | 插件文件不完整，通常是网盘下载时漏了文件。从 GitHub 重新下载，确认 `web/vnccs/assets/pose_studio_makehuman.v2.bin`（约 86MB）存在 |
-| 人体文件存在，但加载中断 | 先检查 IDM、代理或下载器是否接管本地资源请求。新版通过无扩展名接口读取人体数据，并区分缺失、请求中断和解析失败；更新后需重启后端加载接口，旧服务仍回退到静态文件 |
-| 骨骼识别到 100%，点应用无反应 | 查看识别按钮旁的具体状态。新版对缺少脚踝等关节的半身照片，只应用有效的肢体段，保留未识别部位；没有有效肢体段会明确提示。识别进度不代表关节点完整，其他原因需附原图和日志定位 |
-| `pose_json` 校验提示 `tuple index out of range` | 一种已复现原因是保存的连线指向不存在的输出序号。新版修复已知 Fisher 节点的姿势数据连线，并按当前后端节点接口在排队前检查；仍报错请提供工作流及完整日志，不能仅凭该异常确定原因 |
-| 找不到人偶图文件 | 人偶图存在 `input/fisher_pose/`，换电脑或清空过 input 文件夹时会丢。打开编辑器点一次「仅应用」即可重新生成 |
-| 多手、多腿 | 人偶图比例尽量和人物图一致（「人偶图尺寸」里点「人物图」），并用「撑满」让人偶占满画面。人物图请用全身照，只有头像时模型不知道身体长什么样 |
-| 改动作后双人左右互换 | 更新插件、重启 ComfyUI 并刷新页面。旧版合照提示词曾与界面标签反向，新版已删除反向补偿，仍保留每次打开默认左侧人物 1、右侧人物 2，本次编辑可手动交换。先检查「正面结果预览」；这里换人，换机位会继续沿用该结果。完整合照的对应仍依赖模型遵循提示词，并非身份锁定 |
-| 两个人偶生成三个人，或保留了原合照动作 | 旧双人指令在实际样本中会重复人物。现改为保留 VNCCS 触发词并明确调整合照中现有两人的姿势。更新后须重启后端；已有工作流无需重接。先检查正面结果，换机位无法修复第一阶段的重复人物。查看[真实对照与剩余限制](duo-validation.md)，不能把换种子偶尔成功当作稳定修复 |
-| 提示「后端未加载双人人物对应修复」 | 当前网页连接的 ComfyUI 进程仍未加载更新。先保存工作流，完全退出并重启对应服务，再刷新网页。如果同时开了多个端口，确认当前地址对应的是已重启的服务。仅更新文件、刷新网页或更换工作流不会重载 Python 后端。新版会在双人合照排队前核对后端能力，旧服务未更新时停止排队 |
+| After disabling a photo, the result keeps the source photo's pose | An older single-person instruction failed to follow the mannequin. Update the plugin, restart the backend and refresh. The new instruction and photo-driven mannequin switching address this reproduced case. Existing workflows/models remain usable. See [comparison tests](single-validation.md) |
+| Large camera turn still looks frontal, or a missing-source-camera error appears | Update the plugin and workflow, then restart the backend. The old fixed world-angle reference was replaced by each reconstruction's predicted camera. In old workflows, add TripoSplat sampling `latent` → coarse-render `camera_latent`. No new weights are required |
+| VAE loading fails, logs include `lora key not loaded`, or output is identical to the character photo | Core/model/LoRA versions may be incompatible; inspect the complete log. Check Qwen Image 2.1 support. Portable installations can run `update/update_comfyui.bat`; Git installations can use `git pull`. Update to 0.36.0 or newer |
+| Editor does not open, or reports `Failed to load Pose Studio MakeHuman asset: HTTP 404` | Plugin files are incomplete, commonly after a cloud-drive download. Download the complete repository and verify `web/vnccs/assets/pose_studio_makehuman.v2.bin` (about 86 MB) exists |
+| Body asset exists but loading is interrupted | Check whether IDM, a proxy or download manager intercepts local requests. The new extensionless route distinguishes missing assets, interruptions and parsing failures. Restart the backend to load the route; an old service falls back to static files |
+| Detection reaches 100%, but Apply appears inactive | Read the status beside the detection controls. Partial photos with missing ankles or other joints apply only usable limb segments and preserve the rest. No usable segments produces a clear message. Progress does not mean all joints were found; other causes require the image and log |
+| `pose_json` validation reports `tuple index out of range` | One reproduced cause is a saved link to a nonexistent output index. The frontend repairs known Fisher pose links and validates against the running backend schema before queuing. If it persists, provide the workflow and full log; this exception alone does not identify the cause |
+| Mannequin image file is missing | Files in `input/fisher_pose/` may be absent after moving machines or clearing input. Open the editor and Apply only to regenerate them |
+| Extra hands or legs | Match the mannequin ratio to the character photo using Character photo under Mannequin image size, and fit the mannequin to fill the frame. Use full-body character photos; a portrait alone gives the model no body reference |
+| Two people swap sides after a pose edit | Update, restart and refresh. Older group instructions inverted the UI labels. The inverse compensation was removed. Each editor opening defaults to source-left = character 1 and source-right = character 2; assignments can be swapped for the session. Check the front result first because camera changes inherit it. This is prompt following, not identity locking |
+| Two mannequins generate three people, or keep the original group pose | The old two-person instruction duplicated characters in actual samples. It now keeps the VNCCS trigger and explicitly reposes the existing pair. Restart the backend after updating; existing workflow links can stay. Check the front result first. Camera changes cannot remove first-stage duplicates. See [controlled comparisons and remaining limits](duo-validation.md); occasional success with another seed is not evidence of a stable fix |
+| Backend has not loaded the two-person assignment fix | The service connected to this browser has not loaded the update. Save, fully quit/restart that ComfyUI service, then refresh. If multiple ports are running, check the current address. Updating files, refreshing or reimporting a workflow does not reload Python. Group-photo queuing checks backend capability and stops if the running service is outdated |
 
-## 已知限制
+## Known limitations
 
-- 自由姿势最多两个人。当前双人样本中的姿势跟随不如单人稳定，动作幅度大的姿势（举手、指向、伸臂）比细微动作（叉腰）更容易还原。OpenPose 图里有多人时，只取身形最大的那个人。
-- 2D 骨架无法唯一确定前后深度；「贴合原图」适合先匹配画面中的动作方向，不保留真实纵深。复杂遮挡、侧身和服装遮住的关节仍可能误检，插画与真人的身体比例也可能不同。可先用原图叠加预览检查识别，再调整人偶；头部转向、手指、脚掌不会从骨架读取。部分关节缺失时只应用可见肢体，未识别部位保持现有姿势，此时不能切换「估算立体」。
-- 骨骼参考是模型的视觉输入。新版提示词明确彩色线和关节点只作动作引导，单张同种子样本已消除成图中的骨骼线，但不能保证所有风格和动作都不复制参考元素。复杂双人多余肢体、身份和比例漂移仍需逐阶段检查，运行成功不等于画面正确。
-- 人偶图只提供姿势。输出比例和人偶图差别很大时，人物在画面里的位置由模型决定。
+- Free-pose mode supports at most two people. Two-person pose following is less stable in current samples. Broad movements such as waving, pointing and extending arms are easier than subtle hand-on-hip changes. When importing a multi-person OpenPose image through the basic skeleton-gallery path, only the largest person is used; the detection tools provide explicit person selection.
+- A 2D skeleton cannot uniquely determine depth. Match source image preserves projected directions, not true depth. Occlusion, side views, clothing and differences between illustrated and human proportions can cause errors. Check detection over the source, then adjust the mannequin. Head orientation, fingers and foot orientation are not read from the skeleton. Partial detections apply visible limbs only and cannot switch to Estimate 3D depth.
+- Skeleton guides are visual model inputs. The prompt states that colored lines and joints are guides only. A same-seed sample removed copied guide lines, but this is not guaranteed for every style/action. Inspect complex two-person extra limbs, identity changes and proportion drift at each stage; successful execution does not establish image quality.
+- The mannequin supplies pose only. If reference and final output ratios differ greatly, the model decides the characters' image positions.

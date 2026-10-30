@@ -57,9 +57,13 @@ def instruction(pose_json=None, reference_mode=None):
 
 
 def free_pose_prompt(extra="", pose_json=None, reference_mode=None):
-    lines = [instruction(pose_json, reference_mode)]
-    if json.loads(pose_json or '{}').get('outputSkeleton') is True:
-        lines.append(SKELETON_GUIDE_INSTRUCTION)
+    data = json.loads(pose_json or '{}')
+    if isinstance(data.get('systemPrompt'), str):
+        lines = [data['systemPrompt']]
+    else:
+        lines = [instruction(pose_json, reference_mode)]
+        if data.get('outputSkeleton') is True:
+            lines.append(SKELETON_GUIDE_INSTRUCTION)
     lines += [line.strip() for line in str(extra or "").splitlines()]
     return "\n".join(line for line in lines if line)
 

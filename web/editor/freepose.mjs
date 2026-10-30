@@ -1,3 +1,4 @@
+import { localizeDOM, confirmMessage as confirm, promptMessage as prompt } from '../i18n.mjs';
 import { loadBodyPack } from './body-pack.mjs?v=20261010-feedback2';
 import { createMovementGizmo } from './movement-gizmo.mjs?v=20261010-xyz1';
 import { detectorOptions, detectionPrompt } from './pose-detector.mjs';
@@ -21,6 +22,7 @@ import { DEFAULT_FRAMING, frontFraming, isTurned, outputShot } from './framing.m
 
 const $ = selector => document.querySelector(selector);
 const embedded = new URLSearchParams(location.search).has('embedded');
+const stopLocalization = localizeDOM(document);
 const INSTRUCTION = 'Draw character from image2. Repose the person in image2 to match image1. Preserve their appearance and the scene.';
 const FRONT = { yaw: 0, pitch: 0 };
 const CAPTURE_BACKGROUND = [255, 255, 255];
@@ -87,7 +89,8 @@ function instructionText() {
     return `Draw the ${first} character from image2 in the pose of the ${first} mannequin in image1, and the ${second} character from image3 in the pose of the ${second} mannequin in image1.`;
 }
 const SKELETON_GUIDE_INSTRUCTION = 'The colored skeleton lines and joint markers in image1 are pose guides only; omit them from the finished image.';
-const promptText = () => [instructionText(), doc.outputSkeleton ? SKELETON_GUIDE_INSTRUCTION : '', ...extraPrompt.split('\n').map(line => line.trim())].filter(Boolean).join('\n');
+const systemPromptText = () => doc.systemPrompt ?? [instructionText(), doc.outputSkeleton ? SKELETON_GUIDE_INSTRUCTION : ''].filter(Boolean).join('\n');
+const promptText = () => [systemPromptText(), ...extraPrompt.split('\n').map(line => line.trim())].filter(Boolean).join('\n');
 
 function toast(text) {
     const element = $('#toast');
@@ -1318,6 +1321,8 @@ function refreshControls() {
         const input = $(`#prop-${key}`);
         if (input) { input.value = doc.proportions[key]; setOutput(`prop-${key}`, `${Math.round(doc.proportions[key] * 100)}%`); }
     }
+    const systemPrompt = systemPromptText();
+    if ($('#system-prompt').value !== systemPrompt) $('#system-prompt').value = systemPrompt;
     $('#description').textContent = promptText();
     refreshBoneSliders();
     refreshMovementTool();
@@ -1462,6 +1467,8 @@ for (const button of document.querySelectorAll('.panel-tabs button')) {
         for (const tab of ['output', 'pose', 'body', 'proportion']) $(`#${tab}-panel`).hidden = tab !== button.dataset.tab;
     };
 }
+$('#system-prompt').addEventListener('input', event => { doc.systemPrompt = event.target.value; refreshControls(); });
+$('#reset-system-prompt').onclick = () => { delete doc.systemPrompt; refreshControls(); };
 $('#extra-prompt').addEventListener('input', event => { extraPrompt = event.target.value; refreshControls(); });
 $('#copy-description').onclick = async () => { try { await navigator.clipboard.writeText(promptText()); toast('已复制'); } catch { toast('复制失败'); } };
 
@@ -1518,6 +1525,7 @@ function docFrom(saved) {
     const { grips, ...first } = people ? people[0] : personFrom(saved);
     return {
         ...first, people, active: 0, portraitState: saved.portraitState, referenceMode: saved.referenceMode || (secondReferenceConnected ? 'separate' : 'group'), swapPeople: saved.swapPeople === true, outputSkeleton: saved.outputSkeleton === true, autoFit: saved.autoFit !== false,
+        systemPrompt: typeof saved.systemPrompt === 'string' ? saved.systemPrompt : undefined,
         // The mannequin size lives only here; the node's width/height are the separate output size.
         width: round16(Number(saved.width) || doc.width), height: round16(Number(saved.height) || doc.height),
         framing: frontFraming(saved),
@@ -1628,6 +1636,7 @@ function showError(error) {
 
 if (!embedded) { $('#apply-editor').hidden = true; $('#cancel-editor').hidden = true; }
 function dispose() {
+    stopLocalization();
     ready = false;
     clearTimeout(autoFitTimer); clearTimeout(previewTimer); clearTimeout(morphTimer);
     previewRevision++;

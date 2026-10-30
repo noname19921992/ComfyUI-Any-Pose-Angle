@@ -1,38 +1,38 @@
-# 姿势辅助工具
+# Pose assistance tools
 
-[使用指南](usage.md) · [模型下载](installation.md#sdpose可选)
+[User guide](usage.md) · [Model downloads](installation.md#sdpose-optional)
 
-本次吸收 [ComfyUI-PZ-EasyUse](https://github.com/prinzer/ComfyUI-PZ-EasyUse) 的姿势辅助工具思路，在 Fisher 双人编辑器中重新接入；无需安装另一套编辑器。保留 Fisher 原有双人身份、XYZ、独立镜头与两阶段生成链路。
+Inspired by the pose assistance tools in [ComfyUI-PZ-EasyUse](https://github.com/prinzer/ComfyUI-PZ-EasyUse), these tools are integrated into Fisher's two-person editor. No second editor is required. Fisher's character assignments, XYZ controls, separate camera and two-stage generation pipeline are preserved.
 
-## 识别与修正
+## Detection and correction
 
-上传姿势参考图后，选择 **DWPose** 或 **SDPose**。默认仍为 DWPose；SDPose 需要可选权重及提供 SDPose 节点的 ComfyUI 核心。
+After uploading a pose reference, select **DWPose** or **SDPose**. DWPose remains the default. SDPose requires optional weights and a ComfyUI core that provides the SDPose nodes.
 
-- **识别骨骼图**：先预览原图上的关节点，确认后应用。
-- **一键识别并应用**：识别完成后直接应用到当前人物；不替换生图的人物照片。
-- **修正骨架**：拖动身体关节点、补点、删点、撤销或还原；可导入/导出带画布尺寸的 OpenPose JSON，也可下载黑底骨架 PNG。保存修正后，再点应用。
-- **多人参考**：DWPose 返回多人时，可选择参考图中的人物，再应用到当前人偶。SDPose 此入口按整图单人提取，不提供多人检测框；合照请使用 DWPose。
+- **Detect skeleton**: preview keypoints over the source image before applying.
+- **Detect and apply**: apply detection directly to the active character; the photo used for generation is preserved.
+- **Edit keypoints**: drag body joints, add/delete points, undo or reset. Import/export OpenPose JSON with canvas dimensions, or download a black-background skeleton PNG. Save corrections, then apply.
+- **Multiple people in a reference**: when DWPose returns multiple people, select one to apply to the current mannequin. This SDPose entry extracts one person from the full image without multi-person detection boxes; use DWPose for group photos.
 
-全程直接传递原始身体坐标，保留小数精度，不把渲染后的骨架 PNG 再反读一次。本工具编辑身体关节，不编辑面部和手指关键点；遮挡与前后深度仍需手动确认。
+Raw body coordinates retain decimal precision throughout the process. The rendered skeleton PNG is not detected again. The tool edits body joints, not face or finger keypoints. Occlusion and depth still need manual confirmation.
 
-## 身材与对照
+## Body shape and comparison
 
-**估算身材比例**是手动操作，默认不会执行。根据可见肢体做有限幅度的比例调整，可撤销；不推算头部方向，也不移动人物或镜头。单张二维照片存在透视缩短，估算并不等同真实人体测量。
+**Estimate body proportions** is an explicit action and does not run by default. It makes limited, undoable adjustments from visible limbs without inferring head direction or moving the character or camera. Perspective foreshortening in a single 2D image prevents this from being a true body measurement.
 
-**我的身材**只保存体型和骨长比例，套用到当前人物，保留动作、站位、另一人物和镜头。最多 30 份，保存在当前浏览器；清除浏览器数据会丢失。**我的姿势**仍保存到 ComfyUI 服务端，可取消「同时保存身材比例」，载入时保留当前人物的身材。
+**My Body Shapes** stores only shape and bone proportions. Applying a preset preserves the pose, position, other character and camera. Up to 30 presets are stored in the current browser and are lost if browser data is cleared. **My Poses** remains stored on the ComfyUI server. Disable Include body proportions to keep the current character's shape when loading a pose.
 
-镜头面板的 **参考图对位** 可叠加人物照、动作参考图或自选图片，调整透明度。图片按原比例完整显示在拍摄画框内，仅辅助编辑，不进入人偶参考图、机位预览或最终输出。
+The camera panel's **Reference overlay** can display a character photo, pose reference or chosen image with adjustable opacity. The complete image keeps its aspect ratio inside the output frame. It is an editing aid and is excluded from mannequin references, camera previews and final output.
 
-## 生成历史与继续编辑
+## Generation history and continued editing
 
-在 Fisher 自由姿势节点点击 **生成历史与对照**。从 ComfyUI 最近 100 个历史任务中读取此节点关联的最终 SaveImage 输出，最多展示 60 张，按实际任务里的输入照片对照；识别预览不计入结果。
+Click **Generation history & comparison** on the Fisher Free Pose node. It reads final SaveImage outputs associated with this node from ComfyUI's latest 100 history jobs, showing up to 60 results alongside the actual input photos from each job. Detection previews are excluded.
 
-仅有一张启用的人物照片时，可点 **用作下轮人物图**，将结果复制到 `input/fisher_history/` 并替换该照片，支持撤销。两张单人照同时启用时只提供对照，避免把同一张双人结果当成某个单人的身份照。不会自动排队或暗中替换输入。
+With exactly one active character photo, **Use as next character photo** copies the result to `input/fisher_history/` and replaces that photo; Undo replacement is available. With two individual photos enabled, history provides comparison only, avoiding replacement of one person's identity photo with a two-person result. It does not queue generation or silently replace inputs.
 
-历史随 ComfyUI 当前记录保留，重启或清空历史后可能不再显示；已保存的图像文件不会因此删除。
+History depends on the records currently retained by ComfyUI and may disappear after a restart or history clear. Saved image files are not deleted by this.
 
-## 验证边界
+## Validation boundaries
 
-已在真实 ComfyUI 中验证 SDPose、DWPose 识别；骨架鼠标拖拽、应用后的双人隔离；身材预设与只保存动作；叠加图不进入输出。XYZ 三轴拖动、撤销重做、保存重开，以及侧视/俯视镜头、镜头开关和正面缓存回归通过。自动测试见 `tests/test_pose_toolkit.mjs`。
+Real ComfyUI checks covered SDPose/DWPose detection, mouse-driven keypoint edits, isolation between characters after applying, body presets, pose-only saves, and exclusion of overlays from output. XYZ dragging, undo/redo, save/reopen, side/high camera views, camera switches and front-stage caching passed regression checks. Automated checks are in `tests/test_pose_toolkit.mjs`.
 
-没有引入原分支的头部方向推算及图序提示词更换。以上是工具链与交互验证，不代表解决了生成模型的额外肢体、身份混淆或比例漂移。
+The source branch's head-direction inference and image-order prompt changes were not adopted. These checks validate the tools and interactions; they do not solve extra limbs, identity confusion or proportion drift in the generation model.

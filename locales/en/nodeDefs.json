@@ -1,0 +1,320 @@
+{
+  "FisherPoseImage": {
+    "display_name": "Fisher Mannequin Pose Image (Universal)",
+    "inputs": {
+      "extra_prompt": {
+        "name": "Additional requirements"
+      },
+      "pose_json": {
+        "name": "Pose data"
+      },
+      "reference_image": {
+        "name": "Character image"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Mannequin pose image"
+      },
+      "1": {
+        "name": "Prompt"
+      },
+      "2": {
+        "name": "Pose data"
+      }
+    },
+    "description": "Outputs a mannequin pose image and prompt without CLIP or VAE. Use with any image-editing workflow, including Qwen Image 2511. Connect the mannequin to image1 and the full character photo to image2; use image3 only for the second individual photo. Prompts follow the character count and can be customized in the editor."
+  },
+  "FisherQwenFreePose": {
+    "display_name": "Fisher Qwen 2.1 Free Pose",
+    "inputs": {
+      "clip": {
+        "name": "CLIP"
+      },
+      "vae": {
+        "name": "VAE"
+      },
+      "reference_image": {
+        "name": "Character image"
+      },
+      "width": {
+        "name": "Width"
+      },
+      "height": {
+        "name": "Height"
+      },
+      "reference_resolution": {
+        "name": "Reference resolution"
+      },
+      "extra_prompt": {
+        "name": "Additional requirements"
+      },
+      "pose_json": {
+        "name": "Pose data"
+      },
+      "reference_image_2": {
+        "name": "Reference image 2"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Positive"
+      },
+      "1": {
+        "name": "Negative"
+      },
+      "2": {
+        "name": "latent"
+      },
+      "3": {
+        "name": "Actual prompt"
+      },
+      "4": {
+        "name": "Mannequin pose image"
+      },
+      "5": {
+        "name": "Pose data"
+      }
+    },
+    "description": "Free posing for 1–2 characters with Qwen Image 2.1 and the VNCCS_QI2_PoseStudio LoRA. Mannequin = image1; character photo = image2. Group mode uses the full photo and supports swapping character assignments. Use reference_image_2 (image3) only for two individual photos. Set mannequin size in the editor; width and height on this node control the final output independently."
+  },
+  "FisherAnyAngleCamera": {
+    "display_name": "Fisher AnyAngle Camera",
+    "inputs": {
+      "splat": {
+        "name": "Splat"
+      },
+      "pose_json": {
+        "name": "Pose data"
+      },
+      "image": {
+        "name": "Front result",
+        "tooltip": "The first-stage front result. The coarse render uses its dimensions."
+      },
+      "camera_latent": {
+        "name": "Reconstruction camera latent",
+        "tooltip": "Connect the latent from TripoSplat sampling. Its source camera calibrates rotation. Do not use the front image sampling latent."
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Coarse render"
+      },
+      "1": {
+        "name": "AnyAngle prompt"
+      },
+      "2": {
+        "name": "camera_info"
+      }
+    },
+    "description": "Applies the editor camera to a Gaussian splat and renders a coarse reference. For AnyAngle TextEncodeQwenImage21, connect the front result to image1, the coarse render to image2 and this prompt to prompt. Use CFG 1 and 25 steps."
+  },
+  "FisherShot": {
+    "display_name": "Fisher Camera",
+    "inputs": {
+      "pose_json": {
+        "name": "Pose data"
+      },
+      "shot_json": {
+        "name": "Camera data"
+      },
+      "enable_camera": {
+        "name": "Enable camera change",
+        "tooltip": "Off: front pose only. On: run the full pipeline with the editor camera. Turning this off preserves the saved camera."
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Pose & camera"
+      }
+    },
+    "description": "Stores the editor camera. Disable enable_camera for front-view pose generation only; enable it to resume the camera pipeline. The saved camera and front-stage generation settings are preserved."
+  },
+  "FisherPoseResult": {
+    "display_name": "Fisher Final Image",
+    "inputs": {
+      "pose_json": {
+        "name": "Pose data"
+      },
+      "front_image": {
+        "name": "Front image"
+      },
+      "camera_image": {
+        "name": "Camera image"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Final image"
+      }
+    },
+    "description": "Selects the final result using the saved editor camera. Front view uses the front result; camera rotation automatically uses the new view."
+  },
+  "FisherAnyAngleEncode": {
+    "display_name": "Fisher Camera Change Encode",
+    "inputs": {
+      "clip": {
+        "name": "CLIP"
+      },
+      "vae": {
+        "name": "VAE"
+      },
+      "front_image": {
+        "name": "Front image"
+      },
+      "camera_image": {
+        "name": "Camera image"
+      },
+      "resolution": {
+        "name": "Resolution"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Positive"
+      },
+      "1": {
+        "name": "Negative"
+      },
+      "2": {
+        "name": "latent"
+      }
+    }
+  },
+  "FisherQwenPose": {
+    "display_name": "Fisher Qwen 2.1 Character & Pose Encode",
+    "inputs": {
+      "clip": {
+        "name": "CLIP"
+      },
+      "vae": {
+        "name": "VAE"
+      },
+      "reference_image_1": {
+        "name": "Reference image 1"
+      },
+      "output_mode": {
+        "name": "Output mode"
+      },
+      "width": {
+        "name": "Width"
+      },
+      "height": {
+        "name": "Height"
+      },
+      "reference_resolution": {
+        "name": "Reference resolution"
+      },
+      "person_1_reference": {
+        "name": "Character 1 reference"
+      },
+      "person_2_reference": {
+        "name": "Character 2 reference"
+      },
+      "person_3_reference": {
+        "name": "Character 3 reference"
+      },
+      "extra_prompt": {
+        "name": "Additional requirements"
+      },
+      "scene_json": {
+        "name": "Scene data"
+      },
+      "reference_image_2": {
+        "name": "Reference image 2"
+      },
+      "reference_image_3": {
+        "name": "Reference image 3"
+      },
+      "pe_clip": {
+        "name": "Prompt expansion CLIP"
+      },
+      "pe_max_tokens": {
+        "name": "Max expansion tokens"
+      },
+      "presence_penalty": {
+        "name": "Presence penalty"
+      },
+      "thinking": {
+        "name": "Thinking mode"
+      },
+      "use_default_template": {
+        "name": "Use default expansion template",
+        "tooltip": "Use the default prompt expansion system template. When disabled, keep only the JSON output format requirements."
+      },
+      "mtp": {
+        "name": "MTP"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Positive"
+      },
+      "1": {
+        "name": "Negative"
+      },
+      "2": {
+        "name": "latent"
+      },
+      "3": {
+        "name": "Actual prompt"
+      },
+      "4": {
+        "name": "Mannequin pose image"
+      },
+      "5": {
+        "name": "Camera preview"
+      }
+    },
+    "description": "For Qwen Image 2.1. Connect 1–3 reference images in order. The mannequin is appended as the last image. Auto mapping shares image 1 for a group photo, or maps separate photos in character order. Editor uploads assist posing only and do not replace these inputs."
+  },
+  "FisherPoseStudio": {
+    "display_name": "Fisher Pose & Camera",
+    "inputs": {
+      "output_mode": {
+        "name": "Output mode"
+      },
+      "width": {
+        "name": "Width"
+      },
+      "height": {
+        "name": "Height"
+      },
+      "extra_prompt": {
+        "name": "Additional requirements"
+      },
+      "scene_json": {
+        "name": "Scene data"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "Prompt"
+      },
+      "1": {
+        "name": "Mannequin pose image"
+      },
+      "2": {
+        "name": "Camera preview"
+      }
+    },
+    "description": "Pose and position 1–3 characters with a shared camera. Connect the prompt to prompt, the framed mannequin image to image_2, and the original image to image_1. In camera-only mode, leave the pose image disconnected."
+  },
+  "FisherQwen21GGUFCLIP": {
+    "display_name": "Fisher Qwen 2.1 GGUF CLIP Loader",
+    "inputs": {
+      "clip_name": {
+        "name": "GGUF text encoder"
+      },
+      "vision_source": {
+        "name": "Vision encoder",
+        "tooltip": "Select the matching mmproj F16 GGUF or the vision component of the full Qwen3-VL-8B safetensors model."
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "CLIP"
+      }
+    }
+  }
+}
