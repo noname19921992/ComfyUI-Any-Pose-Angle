@@ -1,4 +1,7 @@
 export const english = {
+    "常用姿势 {0}": "Common Poses {0}",
+    "FISHER小彩蛋 {0}": "Fisher Bonus Poses {0}",
+    "我的图库 {0}": "My Library {0}",
     "自动": "Auto",
     "图1": "Image 1",
     "图2": "Image 2",

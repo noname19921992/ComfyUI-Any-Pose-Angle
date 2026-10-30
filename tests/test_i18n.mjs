@@ -29,6 +29,17 @@ test('prompt text, filenames and unrecognized values are preserved', () => {
     setLocale('zh');
 });
 
+test('loaded gallery tabs translate their names and retain image counts', () => {
+    setLocale('en');
+    assert.equal(t('常用姿势 29'), 'Common Poses 29');
+    assert.equal(t('FISHER小彩蛋 209'), 'Fisher Bonus Poses 209');
+    assert.equal(t('我的图库 3'), 'My Library 3');
+    assert.equal(t('我的图库'), 'My Library');
+    setLocale('zh');
+    assert.equal(t('常用姿势 29'), '常用姿势 29');
+    assert.equal(t('FISHER小彩蛋 209'), 'FISHER小彩蛋 209');
+});
+
 test('native locale files cover the same nine node schemas and socket indexes', async () => {
     const load = async lang => JSON.parse(await readFile(new URL(`../locales/${lang}/nodeDefs.json`, import.meta.url), 'utf8'));
     const en = await load('en'), zh = await load('zh');
