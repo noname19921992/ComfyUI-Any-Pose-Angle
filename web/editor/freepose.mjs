@@ -23,7 +23,7 @@ import { DEFAULT_FRAMING, frontFraming, isTurned, outputShot } from './framing.m
 const $ = selector => document.querySelector(selector);
 const embedded = new URLSearchParams(location.search).has('embedded');
 const stopLocalization = localizeDOM(document);
-const INSTRUCTION = 'Draw character from image2. Repose the person in image2 to match image1. Preserve their appearance and the scene.';
+const INSTRUCTION = 'Draw character from image2. Repose the person in image2 to match image1. including the head direction.\nPreserve their appearance and the scene.';
 const FRONT = { yaw: 0, pitch: 0 };
 const CAPTURE_BACKGROUND = [255, 255, 255];
 const CAPTURE_LIGHTS = [{ type: 'ambient', color: '#ffffff', intensity: 1.0 }];
@@ -84,9 +84,9 @@ function instructionText() {
         const [sourceFirst, sourceSecond] = doc.swapPeople ? ['right', 'left'] : ['left', 'right'];
         const [leftSource, rightSource] = first === 'left' ? [sourceFirst, sourceSecond] : [sourceSecond, sourceFirst];
         const order = leftSource === 'left' ? 'Keep' : 'Exchange';
-        return `Draw character from image2. Repose the existing two people in image2 to match image1. ${order} their left-to-right order: the person on the viewer's ${leftSource} in image2 takes the left mannequin pose in image1; the person on the viewer's ${rightSource} takes the right mannequin pose. Preserve their appearances and the scene.`;
+        return `Draw character from image2. Repose the existing two people in image2 to match image1. including the head direction.\n${order} their left-to-right order: the person on the viewer's ${leftSource} in image2 takes the left mannequin pose in image1; the person on the viewer's ${rightSource} takes the right mannequin pose. Preserve their appearances and the scene.`;
     }
-    return `Draw the ${first} character from image2 in the pose of the ${first} mannequin in image1, and the ${second} character from image3 in the pose of the ${second} mannequin in image1.`;
+    return `Draw the ${first} character from image2 in the pose of the ${first} mannequin in image1, and the ${second} character from image3 in the pose of the ${second} mannequin in image1. including the head direction.`;
 }
 const SKELETON_GUIDE_INSTRUCTION = 'The colored skeleton lines and joint markers in image1 are pose guides only; omit them from the finished image.';
 const systemPromptText = () => doc.systemPrompt ?? [instructionText(), doc.outputSkeleton ? SKELETON_GUIDE_INSTRUCTION : ''].filter(Boolean).join('\n');

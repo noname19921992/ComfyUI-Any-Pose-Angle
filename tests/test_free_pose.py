@@ -69,6 +69,7 @@ class FreePoseTests(unittest.TestCase):
         positive, negative, latent, prompt, mannequin, passed = FisherQwenFreePose().encode(**args)['result']
         self.assertEqual(prompt, SINGLE_PERSON_INSTRUCTION)
         self.assertIn('Repose the person in image2 to match image1.', prompt)
+        self.assertIn('including the head direction.', prompt)
         self.assertIn('Preserve their appearance', prompt)
         calls = args['clip'].calls
         self.assertEqual(calls[0][0], prompt)
@@ -139,13 +140,15 @@ class TwoPeopleTests(unittest.TestCase):
         prompt = free_pose_prompt('', json.dumps(data))
         self.assertTrue(prompt.startswith('Draw character from image2.'))
         self.assertIn('Repose the existing two people in image2 to match image1.', prompt)
+        self.assertIn('including the head direction.', prompt)
         self.assertIn('Keep their left-to-right order:', prompt)
 
     def test_second_person_is_image3_and_named_by_side(self):
         args = self.args(pose_json=two_people(), reference_image_2=torch.full((1, 64, 48, 3), .6))
         prompt = FisherQwenFreePose().encode(**args)['result'][3]
         self.assertEqual(prompt, 'Draw the left character from image2 in the pose of the left mannequin in image1, '
-                                 'and the right character from image3 in the pose of the right mannequin in image1.')
+                                 'and the right character from image3 in the pose of the right mannequin in image1. '
+                                 'including the head direction.')
         images = args['clip'].calls[0][1]['images']
         self.assertEqual(len(images), 3)
         self.assertAlmostEqual(float(images[2].mean()), .6, delta=1 / 255)  # person 2 is image3

@@ -14,6 +14,7 @@ from .pose_reference import reference_image
 
 VNCCS_INSTRUCTION = "Draw character from image2"
 SINGLE_PERSON_INSTRUCTION = (f"{VNCCS_INSTRUCTION}. Repose the person in image2 to match image1. "
+                             "including the head direction.\n"
                              "Preserve their appearance and the scene.")
 SKELETON_GUIDE_INSTRUCTION = ("The colored skeleton lines and joint markers in image1 "
                               "are pose guides only; omit them from the finished image.")
@@ -50,10 +51,12 @@ def instruction(pose_json=None, reference_mode=None):
         # pair of "Draw the person ... and ..." clauses duplicated the group in a
         # captured raised-leg case. Seeded image regressions are recorded in docs.
         return (f"{VNCCS_INSTRUCTION}. Repose the existing two people in image2 to match image1. "
+                "including the head direction.\n"
                 f"{order} their left-to-right order: the person on the viewer's {left_source} in image2 takes the left mannequin pose in image1; "
                 f"the person on the viewer's {right_source} takes the right mannequin pose. Preserve their appearances and the scene.")
     return (f"Draw the {first} character from image2 in the pose of the {first} mannequin in image1, "
-            f"and the {second} character from image3 in the pose of the {second} mannequin in image1.")
+            f"and the {second} character from image3 in the pose of the {second} mannequin in image1. "
+            "including the head direction.")
 
 
 def free_pose_prompt(extra="", pose_json=None, reference_mode=None):
