@@ -89,7 +89,13 @@ function instructionText() {
     return `Draw the ${first} character from image2 in the pose of the ${first} mannequin in image1, and the ${second} character from image3 in the pose of the ${second} mannequin in image1. including the head direction.`;
 }
 const SKELETON_GUIDE_INSTRUCTION = 'The colored skeleton lines and joint markers in image1 are pose guides only; omit them from the finished image.';
-const systemPromptText = () => doc.systemPrompt ?? [instructionText(), doc.outputSkeleton ? SKELETON_GUIDE_INSTRUCTION : ''].filter(Boolean).join('\n');
+// Earlier workflows saved the single-person default as a custom override.
+const SAVED_SINGLE_DEFAULTS = new Set([INSTRUCTION,
+    'Draw character from image2. Repose the person in image2 to match image1. Preserve their appearance and the scene.',
+].flatMap(prompt => [prompt, `${prompt}\n${SKELETON_GUIDE_INSTRUCTION}`]));
+const hasCustomSystemPrompt = state => typeof state.systemPrompt === 'string'
+    && (state.systemPromptMode === 'custom' || !SAVED_SINGLE_DEFAULTS.has(state.systemPrompt));
+const systemPromptText = () => hasCustomSystemPrompt(doc) ? doc.systemPrompt : [instructionText(), doc.outputSkeleton ? SKELETON_GUIDE_INSTRUCTION : ''].filter(Boolean).join('\n');
 const promptText = () => [systemPromptText(), ...extraPrompt.split('\n').map(line => line.trim())].filter(Boolean).join('\n');
 
 function toast(text) {
@@ -1467,8 +1473,8 @@ for (const button of document.querySelectorAll('.panel-tabs button')) {
         for (const tab of ['output', 'pose', 'body', 'proportion']) $(`#${tab}-panel`).hidden = tab !== button.dataset.tab;
     };
 }
-$('#system-prompt').addEventListener('input', event => { doc.systemPrompt = event.target.value; refreshControls(); });
-$('#reset-system-prompt').onclick = () => { delete doc.systemPrompt; refreshControls(); };
+$('#system-prompt').addEventListener('input', event => { doc.systemPrompt = event.target.value; doc.systemPromptMode = 'custom'; refreshControls(); });
+$('#reset-system-prompt').onclick = () => { delete doc.systemPrompt; delete doc.systemPromptMode; refreshControls(); };
 $('#extra-prompt').addEventListener('input', event => { extraPrompt = event.target.value; refreshControls(); });
 $('#copy-description').onclick = async () => { try { await navigator.clipboard.writeText(promptText()); toast('已复制'); } catch { toast('复制失败'); } };
 
@@ -1525,7 +1531,8 @@ function docFrom(saved) {
     const { grips, ...first } = people ? people[0] : personFrom(saved);
     return {
         ...first, people, active: 0, portraitState: saved.portraitState, referenceMode: saved.referenceMode || (secondReferenceConnected ? 'separate' : 'group'), swapPeople: saved.swapPeople === true, outputSkeleton: saved.outputSkeleton === true, autoFit: saved.autoFit !== false,
-        systemPrompt: typeof saved.systemPrompt === 'string' ? saved.systemPrompt : undefined,
+        systemPrompt: hasCustomSystemPrompt(saved) ? saved.systemPrompt : undefined,
+        systemPromptMode: hasCustomSystemPrompt(saved) ? 'custom' : undefined,
         // The mannequin size lives only here; the node's width/height are the separate output size.
         width: round16(Number(saved.width) || doc.width), height: round16(Number(saved.height) || doc.height),
         framing: frontFraming(saved),

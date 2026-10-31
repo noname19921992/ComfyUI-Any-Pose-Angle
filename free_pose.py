@@ -18,6 +18,13 @@ SINGLE_PERSON_INSTRUCTION = (f"{VNCCS_INSTRUCTION}. Repose the person in image2 
                              "Preserve their appearance and the scene.")
 SKELETON_GUIDE_INSTRUCTION = ("The colored skeleton lines and joint markers in image1 "
                               "are pose guides only; omit them from the finished image.")
+# Earlier workflows saved the single-person default as a custom override.
+SAVED_SINGLE_DEFAULTS = {
+    prompt + suffix
+    for prompt in (SINGLE_PERSON_INSTRUCTION,
+                   "Draw character from image2. Repose the person in image2 to match image1. Preserve their appearance and the scene.")
+    for suffix in ("", "\n" + SKELETON_GUIDE_INSTRUCTION)
+}
 
 
 def people_sides(pose_json):
@@ -61,7 +68,8 @@ def instruction(pose_json=None, reference_mode=None):
 
 def free_pose_prompt(extra="", pose_json=None, reference_mode=None):
     data = json.loads(pose_json or '{}')
-    if isinstance(data.get('systemPrompt'), str):
+    if isinstance(data.get('systemPrompt'), str) and (data.get('systemPromptMode') == 'custom'
+                                                     or data['systemPrompt'] not in SAVED_SINGLE_DEFAULTS):
         lines = [data['systemPrompt']]
     else:
         lines = [instruction(pose_json, reference_mode)]

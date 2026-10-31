@@ -14,7 +14,7 @@ spec = importlib.util.spec_from_file_location("fisher_test", ROOT / "__init__.py
 module = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = module
 spec.loader.exec_module(module)
-from fisher_test.free_pose import FisherQwenFreePose, free_pose_prompt, SINGLE_PERSON_INSTRUCTION
+from fisher_test.free_pose import FisherQwenFreePose, free_pose_prompt, SINGLE_PERSON_INSTRUCTION, SKELETON_GUIDE_INSTRUCTION, SAVED_SINGLE_DEFAULTS
 
 
 class RecordingClip:
@@ -41,6 +41,35 @@ def pose_json(size=(512, 768), color=(255, 255, 255)):
 
 
 class FreePoseTests(unittest.TestCase):
+    def test_saved_single_default_follows_current_people_and_reference_mode(self):
+        for saved_prompt in SAVED_SINGLE_DEFAULTS:
+            for mode in ('single', 'group', 'separate'):
+                for skeleton in (False, True):
+                    with self.subTest(saved=saved_prompt, mode=mode, skeleton=skeleton):
+                        data = {} if mode == 'single' else json.loads(two_people())
+                        data.update(referenceMode=mode, outputSkeleton=skeleton)
+                        expected = free_pose_prompt('Extra detail', json.dumps(data))
+                        data['systemPrompt'] = saved_prompt
+                        self.assertEqual(free_pose_prompt('Extra detail', json.dumps(data)), expected)
+                        self.assertIn('including the head direction.', expected)
+
+    def test_custom_prompt_remains_literal_in_all_modes(self):
+        for custom in ('Use my own instructions.', '', SINGLE_PERSON_INSTRUCTION):
+            for mode in ('single', 'group', 'separate'):
+                with self.subTest(custom=custom, mode=mode):
+                    data = {} if mode == 'single' else json.loads(two_people())
+                    data.update(referenceMode=mode, outputSkeleton=True, systemPrompt=custom)
+                    if custom == SINGLE_PERSON_INSTRUCTION:
+                        data['systemPromptMode'] = 'custom'
+                    expected = custom + '\nExtra detail' if custom else 'Extra detail'
+                    self.assertEqual(free_pose_prompt('Extra detail', json.dumps(data)), expected)
+
+    def test_shipped_workflow_uses_automatic_prompts(self):
+        workflow = json.loads((ROOT / 'workflows' / 'ComfyUI Qwen Image 2.1 Any Pose and Angle.json').read_text(encoding='utf-8'))
+        node = next(n for n in workflow['nodes'] if n['type'] == 'FisherQwenFreePose')
+        self.assertEqual(node['widgets_values'][4], node['widgets_values_named']['pose_json'])
+        self.assertNotIn('systemPrompt', json.loads(node['widgets_values'][4]))
+
     def test_skeleton_guides_are_not_requested_in_final_image(self):
         from fisher_test.free_pose import SKELETON_GUIDE_INSTRUCTION
         for two in (False, True):
@@ -134,6 +163,30 @@ def two_people(xs=(-4.0, 5.0)):
 
 class TwoPeopleTests(unittest.TestCase):
     args = FreePoseTests.args
+
+    def test_saved_single_override_does_not_reach_two_person_encoder(self):
+        for mode in ('group', 'separate'):
+            with self.subTest(mode=mode):
+                data = json.loads(two_people())
+                data.update(referenceMode=mode, outputSkeleton=True,
+                            systemPrompt=SINGLE_PERSON_INSTRUCTION + '\n' + SKELETON_GUIDE_INSTRUCTION)
+                args = self.args(pose_json=json.dumps(data))
+                if mode == 'separate':
+                    args['reference_image_2'] = torch.full((1, 64, 48, 3), .6)
+                result = FisherQwenFreePose().encode(**args)['result']
+                prompt, kwargs = args['clip'].calls[0]
+                self.assertEqual(result[3], prompt)
+                self.assertIn('including the head direction.', prompt)
+                self.assertIn(SKELETON_GUIDE_INSTRUCTION, prompt)
+                if mode == 'group':
+                    self.assertIn('Repose the existing two people', prompt)
+                    self.assertIn('Keep their left-to-right order:', prompt)
+                    self.assertNotIn('image3', prompt)
+                    self.assertEqual(len(kwargs['images']), 2)
+                else:
+                    self.assertIn('left character from image2', prompt)
+                    self.assertIn('right character from image3', prompt)
+                    self.assertEqual(len(kwargs['images']), 3)
 
     def test_group_reposes_existing_people_with_vnccs_trigger(self):
         data = json.loads(two_people()); data['referenceMode'] = 'group'
