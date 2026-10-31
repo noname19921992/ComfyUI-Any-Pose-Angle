@@ -52,6 +52,8 @@ Restart ComfyUI, refresh with Ctrl+F5 and import [ComfyUI Qwen Image 2.1 Any Pos
 
 The supplied workflow also includes three `Label (rgthree)` decoration nodes and an unconnected `ResolutionSelector`. Install [rgthree-comfy](https://github.com/rgthree/rgthree-comfy) for the labels, or remove them. If ResolutionSelector is unavailable, its unconnected node can be removed; the connected integer constants still control output width and height. The additional `QWEN-2.1-Unchained-V1.safetensors` LoRA node is bypassed by default and does not require that file unless enabled.
 
+The latest workflow adds mannequin and camera previews, a `MarkdownNote`, and a `ShowText|pysssss` prompt display. The prompt display requires ComfyUI-Custom-Scripts; it can be removed if you do not need the text preview. Camera changes are enabled in the saved workflow; turn the camera-change switch off if you only need the front pose and base generation models.
+
 The interface follows **Settings → Language** in ComfyUI. Restart once after installing this update so ComfyUI loads the English/Chinese node translations; subsequent language changes also update an open editor.
 
 ### Base generation models: required for one or two people
