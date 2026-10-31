@@ -24,7 +24,7 @@ The unified workflow includes separate camera storage, cache reuse, a camera-cha
 | Component | Required? | Links and purpose |
 |---|---|---|
 | ComfyUI core | Required | [Official repository](https://github.com/Comfy-Org/ComfyUI) · [Installation/update instructions](https://docs.comfy.org/installation/update_comfyui). Fisher checks for Qwen Image 2.1 support. Camera changes also use core TripoSplat, Gaussian Splat and background-removal nodes |
-| Fisher Pose | Required | [Repository](https://github.com/Work-Fisher/ComfyUI-Fisher-Pose) · [Download ZIP](https://github.com/Work-Fisher/ComfyUI-Fisher-Pose/archive/refs/heads/main.zip) |
+| Fisher Pose | Required | [Repository](https://github.com/noname19921992/ComfyUI-Any-Pose-Angle) · [Download ZIP](https://github.com/noname19921992/ComfyUI-Any-Pose-Angle/archive/refs/heads/main.zip) |
 | comfyui_controlnet_aux | Required for photo pose detection | [Repository and installation](https://github.com/Fannovel16/comfyui_controlnet_aux#installation) · [Download ZIP](https://github.com/Fannovel16/comfyui_controlnet_aux/archive/refs/heads/main.zip). Provides `DWPreprocessor` |
 | VNCCS Utils | No separate installation | [Original plugin](https://github.com/AHEKOT/ComfyUI_VNCCS_Utils). The required mannequin core and assets ship with Fisher Pose, but the **VNCCS LoRA must still be downloaded** |
 
@@ -35,7 +35,7 @@ The unified workflow includes separate camera storage, cache reuse, a camera-cha
 For a first installation, run from the directory containing the `ComfyUI` folder:
 
 ```bash
-git clone https://github.com/Work-Fisher/ComfyUI-Fisher-Pose.git ComfyUI/custom_nodes/ComfyUI-Fisher-Pose
+git clone https://github.com/noname19921992/ComfyUI-Any-Pose-Angle.git ComfyUI/custom_nodes/ComfyUI-Fisher-Pose
 ```
 
 For an existing Git installation, run inside the plugin directory:
@@ -48,7 +48,9 @@ For ZIP installations, download the latest version, back up the old plugin folde
 
 If downloaded through a cloud drive, verify that `web/vnccs/assets/pose_studio_makehuman.v2.bin` (about 86 MB) exists. This is a bundled mannequin asset, not a generation model for the models folder. If missing, download the complete plugin from this repository.
 
-Restart ComfyUI, refresh with Ctrl+F5 and import the [unified two-person pose and camera workflow](../workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json). Two individual photos are connected by default. `person_1.png` and `person_2.png` are placeholders; upload your own photos. Mannequin references and camera previews are embedded, so the workflow does not depend on images from the author's computer. See [character input modes](usage.md#character-input-modes) for group-photo and single-person use.
+Restart ComfyUI, refresh with Ctrl+F5 and import [ComfyUI Qwen Image 2.1 Any Pose and Angle](<../workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json>). It starts with one connected character photo; the second LoadImage is disconnected. Replace the saved photo selections with your own images, then open the editor and apply once. The supplied JSON references local files under `input/fisher_pose/`; applying regenerates them on your machine. See [character input modes](usage.md#character-input-modes) for two-person setup.
+
+The supplied workflow also includes three `Label (rgthree)` decoration nodes and an unconnected `ResolutionSelector`. Install [rgthree-comfy](https://github.com/rgthree/rgthree-comfy) for the labels, or remove them. If ResolutionSelector is unavailable, its unconnected node can be removed; the connected integer constants still control output width and height. The additional `QWEN-2.1-Unchained-V1.safetensors` LoRA node is bypassed by default and does not require that file unless enabled.
 
 The interface follows **Settings → Language** in ComfyUI. Restart once after installing this update so ComfyUI loads the English/Chinese node translations; subsequent language changes also update an open editor.
 

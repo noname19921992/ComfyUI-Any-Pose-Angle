@@ -68,7 +68,6 @@ export const english = {
     "⇄ 镜像当前人物动作": "⇄ Mirror current pose",
     "⊙ 框住所有人": "⊙ Frame all characters",
     "「{0}」无法识别：{1}": "Could not read “{0}”: {1}",
-    "【Work-Fisher】无限姿势+无限视角（支持双人）.json": "【Work-Fisher】无限姿势+无限视角（支持双人）.json",
     "一张合照": "One group photo",
     "一键摆姿": "Pose presets",
     "一键识别并应用": "Detect and apply",

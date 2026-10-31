@@ -1,8 +1,8 @@
-// Legacy two-stage builder for tests/fixtures only. Do not run on 【Work-Fisher】无限姿势+无限视角（支持双人）.json, which
+// Legacy two-stage builder for tests/fixtures only. Do not run on ComfyUI Qwen Image 2.1 Any Pose and Angle.json, which
 // already includes the camera branch and selects the final image with FisherPoseResult.
 (async () => {
   const app = window.app, graph = app.graph;
-  if (graph._nodes.some(n => n.type === "FisherAnyAngleCamera")) throw new Error("Camera branch already exists; use the shipped 【Work-Fisher】无限姿势+无限视角（支持双人）.json.");
+  if (graph._nodes.some(n => n.type === "FisherAnyAngleCamera")) throw new Error("Camera branch already exists; use the shipped ComfyUI Qwen Image 2.1 Any Pose and Angle.json.");
   const byType = type => graph._nodes.find(n => (n.comfyClass || n.type) === type);
   const unet = byType('UNETLoader'), clip = byType('CLIPLoader'), vae = byType('VAELoader'), pose = byType('FisherQwenFreePose');
   const decoded = byType('VAEDecode');

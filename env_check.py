@@ -71,7 +71,7 @@ def register_routes():
     @routes.get("/fisher_pose/studio_workflow")
     async def get_studio_workflow(request):
         from pathlib import Path
-        return web.FileResponse(Path(__file__).parent / "workflows" / "【Work-Fisher】无限姿势+无限视角（支持双人）.json")
+        return web.FileResponse(Path(__file__).parent / "workflows" / "ComfyUI Qwen Image 2.1 Any Pose and Angle.json")
 
     @routes.get("/fisher_pose/body_pack")
     async def get_body_pack(request):

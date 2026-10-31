@@ -1,5 +1,5 @@
-// One-off migration of workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json, run in the real frontend with
-//   python tests/e2e/cdp_run.py tools/upgrade_studio_workflow.js --workflow workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json
+// One-off migration of workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json, run in the real frontend with
+//   python tests/e2e/cdp_run.py tools/upgrade_studio_workflow.js --workflow "workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json"
 // Inserts the FisherShot node, fixes seeds so a shot-only change reuses the front result, keeps the
 // AnyAngle latent at the front size, previews the front result, mutes the camera branch (front is the
 // default shot) and drops machine-specific properties. Returns the serialized workflow.

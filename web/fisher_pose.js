@@ -321,7 +321,7 @@ async function openEditor(node, { autoApply = false, inputSlots = null } = {}) {
             try {
                 const response = await api.fetchApi("/fisher_pose/studio_workflow");
                 if (!response.ok) throw new Error("请重启 ComfyUI，加载新版插件后重试。");
-                await app.loadGraphData(await response.json(), true, true, "【Work-Fisher】无限姿势+无限视角（支持双人）.json");
+                await app.loadGraphData(await response.json(), true, true, "ComfyUI Qwen Image 2.1 Any Pose and Angle.json");
                 close();
             } catch (error) {
                 frame.contentWindow.postMessage({ type: "fisher-error", message: error.message }, location.origin);

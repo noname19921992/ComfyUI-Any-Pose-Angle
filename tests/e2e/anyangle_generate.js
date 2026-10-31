@@ -1,5 +1,5 @@
 // Pose + new camera angle end to end on the AnyAngle workflow (needs all Qwen 2.1, VNCCS, TripoSplat and
-// AnyAngle models). Run with --workflow "workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json".
+// AnyAngle models). Run with --workflow "workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json".
 (async () => {
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const app = window.app;

@@ -47,4 +47,4 @@ Browser checks used isolated windows and did not overwrite the user's workflow o
 
 ## Updating
 
-No model downloads are required for this round. Continue using `【Work-Fisher】无限姿势+无限视角（支持双人）.json`. Update the plugin, restart the ComfyUI backend, then refresh the page. Refreshing alone does not load updated Python routes or prompts; an already-open editor also keeps its previously loaded JavaScript.
+No model downloads are required for this round. Continue using `ComfyUI Qwen Image 2.1 Any Pose and Angle.json`. Update the plugin, restart the ComfyUI backend, then refresh the page. Refreshing alone does not load updated Python routes or prompts; an already-open editor also keeps its previously loaded JavaScript.

@@ -6,7 +6,7 @@
 
 Edit one- or two-person poses in ComfyUI and generate the corresponding images with Qwen Image 2.1.
 
-[Download plugin](https://github.com/Work-Fisher/ComfyUI-Fisher-Pose/archive/refs/heads/main.zip) · [Download workflow](https://raw.githubusercontent.com/Work-Fisher/ComfyUI-Fisher-Pose/main/workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json)
+[Download plugin](https://github.com/noname19921992/ComfyUI-Any-Pose-Angle/archive/refs/heads/main.zip) · [Download workflow](https://raw.githubusercontent.com/noname19921992/ComfyUI-Any-Pose-Angle/main/workflows/ComfyUI%20Qwen%20Image%202.1%20Any%20Pose%20and%20Angle.json)
 
 [Installation & models](docs/installation.md) · [User guide](docs/usage.md)
 
@@ -73,11 +73,11 @@ Generate the front pose first, then change the camera with AnyAngle. The labels 
 
 | 1 · Choose characters | 2 · Pose and set the camera | 3 · Apply and generate |
 |---|---|---|
-| Upload two individual photos by default, or switch to a group photo or one person | Choose presets and drag joints; switch to Camera when needed | Check the camera preview, then generate |
+| Upload one character photo by default; connect the second input for two individual photos | Choose presets and drag joints; switch to Camera when needed | Check the camera preview, then generate |
 
-Follow the [installation guide](docs/installation.md), then import the single current workflow: [Fisher poses and camera angles, with two-person support](workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json).
+Follow the [installation guide](docs/installation.md), then import the single current workflow: [ComfyUI Qwen Image 2.1 Any Pose and Angle](<workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json>).
 
-- **Two individual photo inputs are connected**: upload photos in Character 1 and Character 2. Mannequin 1 has open arms and mannequin 2 waves. Pose references are embedded; no files from the author's input folder are needed. See [character input modes](docs/usage.md#character-input-modes) for group-photo and single-person use.
+- **Single-person default**: the first photo is connected; the second LoadImage is present but disconnected. Upload your photo, open the editor and apply once to create local mannequin and camera references. See [character input modes](docs/usage.md#character-input-modes) for two-person setup.
 - **Camera change off**: generate only the front pose, using the base models.
 - **Camera change on**: run the full pipeline using the saved camera. Camera-only changes reuse the previous front result and 3D reconstruction.
 - **Output size**: the two integer constants above the workflow control width and height independently of the editor's mannequin image size.

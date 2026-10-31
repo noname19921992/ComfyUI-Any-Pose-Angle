@@ -44,15 +44,16 @@ The interface follows **Settings → Language** in ComfyUI, including node names
 
 ## Character input modes
 
-The current workflow connects two individual photos by default, with two mannequins, independent width/height and the camera-change switch. All nodes are expanded.
+The current workflow starts with one connected character photo and one active mannequin. A second LoadImage is present but disconnected. Independent width/height constants and the camera-change switch remain available.
 
 | Mode | Operation |
 |---|---|
-| Two individual photos, the workflow default | Upload photos for Character 1 and Character 2. Keep Two individual photos selected in the editor. Photo 1 maps to mannequin 1; photo 2 maps to mannequin 2 |
-| One group photo | Upload the full group photo for Character 1. Disconnect `reference_image_2`, then remove or disable the second LoadImage node. Select One group photo in the editor, keep two mannequins and apply |
+| One person, the workflow default | Upload a photo to the connected LoadImage, open Edit pose & camera and apply the pose |
+| Two individual photos | Connect the second LoadImage IMAGE output to `reference_image_2`, and upload both photos. Select Two individual photos in the editor. Photo 1 maps to mannequin 1; photo 2 maps to mannequin 2 |
+| One group photo | Upload the full group photo to the connected LoadImage and leave `reference_image_2` disconnected. Select One group photo, add the second mannequin and apply |
 | One person, switching from two individual photos | Bypass or mute either photo node. Opening the editor or running automatically uses the active photo and its mannequin; no manual mannequin removal or rewiring is needed |
 
-The published workflow embeds the two-person mannequin reference and camera preview. Importing does not require files from the author's `input/fisher_pose/`. Applying a new pose stores local image files as usual. If a workflow is shared without its referenced files, the recipient can open the editor and apply again to rebuild the mannequin reference.
+The supplied JSON stores local mannequin and camera-preview file references under `input/fisher_pose/`. On another machine, open the editor and apply to regenerate those files. It also saves a custom single-person system prompt. When switching to two people, click Restore defaults under System prompt, or supply the corresponding two-person instructions.
 
 Switching is repeatable: photo 1 alone uses character 1; photo 2 alone uses character 2; re-enabling both restores both mannequins. The inactive person's pose is retained in workflow state. Single-person editing updates only the active person; restoring both preserves the previous two-person placement. Count changes automatically open the editor, recapture and apply before queuing continues. With both photos disabled, generation asks for at least one enabled photo. A full group photo continues using One group photo mode, with the user keeping two mannequins.
 
@@ -62,7 +63,7 @@ Two-individual-photo generation has been checked with open arms and waving. Thos
 
 ## New camera views: AnyAngle
 
-Use `workflows/【Work-Fisher】无限姿势+无限视角（支持双人）.json`. Choose character photos, click Edit pose & camera, set poses, switch to Camera if needed and choose the angle, then Apply & generate. Apply only saves changes for a later ComfyUI run.
+Use `workflows/ComfyUI Qwen Image 2.1 Any Pose and Angle.json`. Choose character photos, click Edit pose & camera, set poses, switch to Camera if needed and choose the angle, then Apply & generate. Apply only saves changes for a later ComfyUI run.
 
 The camera-change switch above the workflow is off by default:
 

@@ -1,0 +1,2893 @@
+{
+  "id": "7215bdf8-8cff-4582-87bc-fccc13395703",
+  "revision": 0,
+  "last_node_id": 40,
+  "last_link_id": 63,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "UNETLoader",
+      "pos": [
+        42.53800323022494,
+        -64.64292263008116
+      ],
+      "size": [
+        360,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            61
+          ]
+        }
+      ],
+      "title": "Qwen Image 2.1 · Base Model",
+      "properties": {
+        "Node name for S&R": "UNETLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "default"
+      ],
+      "widgets_values_named": {
+        "unet_name": "qwen_image_2.1_int8_convrot.safetensors",
+        "weight_dtype": "default"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 2,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        44.793873570529115,
+        314.3089000726444
+      ],
+      "size": [
+        360,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 62
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "title": "VNCCS · Pose LoRA",
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "VNCCS_QI2_PoseStudioV1.1.safetensors",
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "VNCCS_QI2_PoseStudioV1.1.safetensors",
+        "strength_model": 1
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        41.10279011043887,
+        489.3788677798565
+      ],
+      "size": [
+        360,
+        130
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            3,
+            48
+          ]
+        }
+      ],
+      "title": "Qwen3-VL · text encoder",
+      "properties": {
+        "Node name for S&R": "CLIPLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "qwen3vl_8b_bf16.safetensors",
+        "qwen_image",
+        "default"
+      ],
+      "widgets_values_named": {
+        "clip_name": "qwen3vl_8b_bf16.safetensors",
+        "type": "qwen_image",
+        "device": "default"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 4,
+      "type": "VAELoader",
+      "pos": [
+        43.899742489522225,
+        710.1443197064789
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            4,
+            10,
+            42,
+            49
+          ]
+        }
+      ],
+      "title": "Qwen Image 2.1 · VAE",
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ],
+      "widgets_values_named": {
+        "vae_name": "qwen_image_2.1_vae_bf16.safetensors"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        560,
+        210
+      ],
+      "size": [
+        340,
+        325
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            5
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "title": "Person 1",
+      "properties": {
+        "Node name for S&R": "LoadImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0",
+        "guhaiImageValue": "01_character_A.png"
+      },
+      "widgets_values": [
+        "01_character_A.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "01_character_A.png",
+        "upload": "image"
+      },
+      "color": "#325c79",
+      "bgcolor": "#233744"
+    },
+    {
+      "id": 6,
+      "type": "FisherQwenFreePose",
+      "pos": [
+        1000,
+        210
+      ],
+      "size": [
+        400,
+        516
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 4
+        },
+        {
+          "name": "reference_image",
+          "type": "IMAGE",
+          "link": 5
+        },
+        {
+          "name": "reference_image_2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": 57
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": 58
+        }
+      ],
+      "outputs": [
+        {
+          "name": "正向",
+          "type": "CONDITIONING",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "负向",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "实际提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "人偶姿态图",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "姿势数据",
+          "type": "STRING",
+          "links": [
+            52
+          ]
+        }
+      ],
+      "title": "Edit Pose and Camera Angle",
+      "properties": {
+        "Node name for S&R": "FisherQwenFreePose",
+        "aux_id": "Work-Fisher/ComfyUI-Fisher-Pose",
+        "ver": "f9505b2385bccb168304c1c4d9987ef9e3df37bb"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1024,
+        "",
+        "{\"version\":2,\"kind\":\"vnccs-free-pose\",\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"pelvis\":[0,0,-0.7742201649280657],\"spine_01\":[-10.132840069342643,-0.1551437155583583,0.571007464617778],\"spine_02\":[6.447897080844318,9.752557214023843e-18,-1.5823480729261747e-16],\"spine_03\":[0.9813540660457247,-9.245390924172995e-19,7.339010525772364e-17],\"thigh_l\":[5.044530617531585,0.5642655715721381,1.6809955397015668],\"thigh_r\":[4.727672140341025,0.44206596528295294,5.816604250420229],\"calf_l\":[-10.64532135033363,-1.418203275226272,1.4664806966496349],\"calf_r\":[-10.06025658205921,0.6454355398797538,2.220885991655009],\"clavicle_l\":[-1.234225520042026,-8.576817653796365,3.8624970370058094],\"clavicle_r\":[-1.131254826061261,8.718555641987614,-4.676834568332787],\"neck_01\":[-2,71,2.4103450972655645],\"upperarm_l\":[4.433349302727205,2.5501917027804657,-35.44826682539225],\"upperarm_r\":[4.567026618933854,-2.6581202664317853,34.12939312473513],\"lowerarm_l\":[41.569786354650574,18.95348955734197,-17.83721202581091],\"lowerarm_r\":[41.675558275605546,-18.69275525751145,17.98532253954948]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[-0.0602046753306602,-0.28728336339398197,-0.36393853034637946],\"hand_l\":[2.667000207282817,-0.8947917979747775,-0.3615097289370145],\"hand_r\":[-2.989397726165543,-0.8230192665623246,-0.3625196564297527],\"foot_l\":[2.509355508275047,-10.652544649446758,-0.3531515829808996],\"foot_r\":[-1.224695749639552,-10.687017576072055,-0.3531515829808986],\"head\":[0.42676763331640055,7.551136966277822,-0.6952772144340348],\"upperarm_l\":[2.0029478465853017,5.148664198209413,-0.36150972893701455],\"upperarm_r\":[-2.075702042638733,5.186502257899696,-0.36251965642974965]},\"poleTargetPositions\":{\"leftArm\":[1.738723672153213,0.9028833677225907,0.09424574673175812],\"rightArm\":[-1.801851977040729,0.9454873079220885,0.09424574673175812],\"leftLeg\":[1.2006802076168615,-4.1052601231205,0.09424574673175812],\"rightLeg\":[-0.8276718509393876,-4.0907427550585265,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":-0.0602046753306602,\"y\":0.8145597355957693,\"z\":-0.5057005816182807,\"zoom\":1.5041745244523754},\"openpose\":{\"key\":\"photo\",\"name\":\"01_character_A.png\",\"points\":{\"head\":[500.82523184269667,167.29413443803787],\"neck\":[504.2951198704541,332.69213042780757],\"rs\":[373.59600415825844,331.53550108522177],\"re\":[325.01757176965475,532.7890066951513],\"rw\":[313.45127834379673,708.5966667681932],\"ls\":[634.9942355826497,333.8487597703934],\"le\":[674.319633230567,535.1022653803229],\"lw\":[678.9461506009102,708.5966667681932],\"rh\":[417.5479191765189,690.0905972868204],\"rk\":[426.80095391720533,1025.513106636703],\"ra\":[431.42747128754854,1314.6704422831535],\"lh\":[588.7290618792176,692.403855971992],\"lk\":[616.4881661012769,1025.513106636703],\"la\":[660.4400811195374,1319.2969596534967]},\"flips\":{},\"depthMode\":\"planar\"},\"portraitState\":{\"activeSlots\":[1],\"savedPeople\":{\"1\":{\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"pelvis\":[0,0,-0.7742201649280657],\"spine_01\":[-10.132840069342643,-0.1551437155583583,0.571007464617778],\"spine_02\":[6.447897080844318,9.752557214023843e-18,-1.5823480729261747e-16],\"spine_03\":[0.9813540660457247,-9.245390924172995e-19,7.339010525772364e-17],\"thigh_l\":[5.044530617531585,0.5642655715721381,1.6809955397015668],\"thigh_r\":[4.727672140341025,0.44206596528295294,5.816604250420229],\"calf_l\":[-10.64532135033363,-1.418203275226272,1.4664806966496349],\"calf_r\":[-10.06025658205921,0.6454355398797538,2.220885991655009],\"clavicle_l\":[-1.234225520042026,-8.576817653796365,3.8624970370058094],\"clavicle_r\":[-1.131254826061261,8.718555641987614,-4.676834568332787],\"neck_01\":[-2,71,2.4103450972655645],\"upperarm_l\":[4.433349302727205,2.5501917027804657,-35.44826682539225],\"upperarm_r\":[4.567026618933854,-2.6581202664317853,34.12939312473513],\"lowerarm_l\":[41.569786354650574,18.95348955734197,-17.83721202581091],\"lowerarm_r\":[41.675558275605546,-18.69275525751145,17.98532253954948]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[-0.0602046753306602,-0.28728336339398197,-0.36393853034637946],\"hand_l\":[2.667000207282817,-0.8947917979747775,-0.3615097289370145],\"hand_r\":[-2.989397726165543,-0.8230192665623246,-0.3625196564297527],\"foot_l\":[2.509355508275047,-10.652544649446758,-0.3531515829808996],\"foot_r\":[-1.224695749639552,-10.687017576072055,-0.3531515829808986],\"head\":[0.42676763331640055,7.551136966277822,-0.6952772144340348],\"upperarm_l\":[2.0029478465853017,5.148664198209413,-0.36150972893701455],\"upperarm_r\":[-2.075702042638733,5.186502257899696,-0.36251965642974965]},\"poleTargetPositions\":{\"leftArm\":[1.738723672153213,0.9028833677225907,0.09424574673175812],\"rightArm\":[-1.801851977040729,0.9454873079220885,0.09424574673175812],\"leftLeg\":[1.2006802076168615,-4.1052601231205,0.09424574673175812],\"rightLeg\":[-0.8276718509393876,-4.0907427550585265,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":-2.896661352055504,\"y\":-0.3114554360655418,\"z\":-0.5054213495406765,\"zoom\":1.3569247831472113},\"openpose\":{\"key\":\"photo\",\"name\":\"01_character_A.png\",\"points\":{\"head\":[500.82523184269667,167.29413443803787],\"neck\":[504.2951198704541,332.69213042780757],\"rs\":[373.59600415825844,331.53550108522177],\"re\":[325.01757176965475,532.7890066951513],\"rw\":[313.45127834379673,708.5966667681932],\"ls\":[634.9942355826497,333.8487597703934],\"le\":[674.319633230567,535.1022653803229],\"lw\":[678.9461506009102,708.5966667681932],\"rh\":[417.5479191765189,690.0905972868204],\"rk\":[426.80095391720533,1025.513106636703],\"ra\":[431.42747128754854,1314.6704422831535],\"lh\":[588.7290618792176,692.403855971992],\"lk\":[616.4881661012769,1025.513106636703],\"la\":[660.4400811195374,1319.2969596534967]},\"flips\":{},\"depthMode\":\"planar\"}},\"2\":{\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"spine_01\":[-10.133881952509862,0,0],\"spine_02\":[6.44789708084431,0,0],\"spine_03\":[1.9817494222949084,0,0],\"thigh_l\":[5.07117002413439,0.2105161294981653,-0.9736716381794965],\"thigh_r\":[5.07117002413439,-0.2105161294981653,0.9736716381794965],\"calf_l\":[-9.594192071434588,-0.08339897169080071,-5.036378046046619],\"calf_r\":[-9.594192071434588,0.08339897169080071,5.036378046046619],\"clavicle_l\":[-1.1829508656851622,-8.64780750975099,4.269838977517809],\"clavicle_r\":[-1.1829508656851622,8.64780750975099,-4.269838977517809],\"neck_01\":[6.843909162558707,0,0],\"upperarm_l\":[2.0197112294006057,1.4242838124548483,-38.80123253309387],\"upperarm_r\":[-0.992408417231223,5.265702179457993,-57.73374671195927],\"lowerarm_l\":[32.63325170320422,21.816110385382984,-11.076966078316117],\"lowerarm_r\":[-37.25041828770651,-31.52725644960111,-58.052396520620924]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[9.045776960280882,-1.3054032501907127,-0.37801318788518895],\"hand_l\":[11.484406562567328,-1.833403344064362,0.10648865313851191],\"hand_r\":[4.1289570836350205,7.02607452382437,0.44971323271931807],\"foot_l\":[10.524121229322255,-10.702718159368207,-0.46167982601478325],\"foot_r\":[7.567432691239511,-10.702718159368207,-0.46167982601478325],\"head\":[9.045776960280882,5.713040642232185,-0.15894453467641145],\"upperarm_l\":[10.88614977550996,3.6097979525195285,-0.3299581617219193],\"upperarm_r\":[7.205404145051805,3.6097979525195285,-0.3299581617219193]},\"poleTargetPositions\":{\"leftArm\":[1.6197583989648365,0.8971776013367656,0.13422527719606023],\"rightArm\":[-3.2466149312370796,3.414282723878599,0.5087486261931402],\"leftLeg\":[1.0891264434220527,-4.100259295229385,0.09424574673175812],\"rightLeg\":[-1.0891264434220527,-4.100259295229385,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":9.044276739639967,\"y\":-0.3114554360655418,\"z\":-0.5054213495406765,\"zoom\":1.3569247831472113},\"openpose\":null,\"grips\":{\"l\":0,\"r\":0}}}},\"referenceMode\":\"separate\",\"swapPeople\":false,\"outputSkeleton\":true,\"autoFit\":true,\"systemPrompt\":\"Draw character from image2. Repose the person in image2 to match image1. including the head direction.\\nPreserve their appearance and the scene.\\nThe colored skeleton lines and joint markers in image1 are pose guides only; omit them from the finished image.\",\"width\":1024,\"height\":1024,\"framing\":{\"zoom\":1,\"offsetX\":0,\"offsetY\":0},\"camera\":{\"yaw\":0,\"pitch\":0},\"poseReferenceFile\":{\"filename\":\"pose_13af265fb19d93633729c.png\",\"subfolder\":\"fisher_pose\",\"type\":\"input\"}}",
+        null,
+        null
+      ],
+      "widgets_values_named": {
+        "width": 1024,
+        "height": 1024,
+        "reference_resolution": 1024,
+        "extra_prompt": "",
+        "pose_json": "{\"version\":2,\"kind\":\"vnccs-free-pose\",\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"pelvis\":[0,0,-0.7742201649280657],\"spine_01\":[-10.132840069342643,-0.1551437155583583,0.571007464617778],\"spine_02\":[6.447897080844318,9.752557214023843e-18,-1.5823480729261747e-16],\"spine_03\":[0.9813540660457247,-9.245390924172995e-19,7.339010525772364e-17],\"thigh_l\":[5.044530617531585,0.5642655715721381,1.6809955397015668],\"thigh_r\":[4.727672140341025,0.44206596528295294,5.816604250420229],\"calf_l\":[-10.64532135033363,-1.418203275226272,1.4664806966496349],\"calf_r\":[-10.06025658205921,0.6454355398797538,2.220885991655009],\"clavicle_l\":[-1.234225520042026,-8.576817653796365,3.8624970370058094],\"clavicle_r\":[-1.131254826061261,8.718555641987614,-4.676834568332787],\"neck_01\":[-2,71,2.4103450972655645],\"upperarm_l\":[4.433349302727205,2.5501917027804657,-35.44826682539225],\"upperarm_r\":[4.567026618933854,-2.6581202664317853,34.12939312473513],\"lowerarm_l\":[41.569786354650574,18.95348955734197,-17.83721202581091],\"lowerarm_r\":[41.675558275605546,-18.69275525751145,17.98532253954948]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[-0.0602046753306602,-0.28728336339398197,-0.36393853034637946],\"hand_l\":[2.667000207282817,-0.8947917979747775,-0.3615097289370145],\"hand_r\":[-2.989397726165543,-0.8230192665623246,-0.3625196564297527],\"foot_l\":[2.509355508275047,-10.652544649446758,-0.3531515829808996],\"foot_r\":[-1.224695749639552,-10.687017576072055,-0.3531515829808986],\"head\":[0.42676763331640055,7.551136966277822,-0.6952772144340348],\"upperarm_l\":[2.0029478465853017,5.148664198209413,-0.36150972893701455],\"upperarm_r\":[-2.075702042638733,5.186502257899696,-0.36251965642974965]},\"poleTargetPositions\":{\"leftArm\":[1.738723672153213,0.9028833677225907,0.09424574673175812],\"rightArm\":[-1.801851977040729,0.9454873079220885,0.09424574673175812],\"leftLeg\":[1.2006802076168615,-4.1052601231205,0.09424574673175812],\"rightLeg\":[-0.8276718509393876,-4.0907427550585265,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":-0.0602046753306602,\"y\":0.8145597355957693,\"z\":-0.5057005816182807,\"zoom\":1.5041745244523754},\"openpose\":{\"key\":\"photo\",\"name\":\"01_character_A.png\",\"points\":{\"head\":[500.82523184269667,167.29413443803787],\"neck\":[504.2951198704541,332.69213042780757],\"rs\":[373.59600415825844,331.53550108522177],\"re\":[325.01757176965475,532.7890066951513],\"rw\":[313.45127834379673,708.5966667681932],\"ls\":[634.9942355826497,333.8487597703934],\"le\":[674.319633230567,535.1022653803229],\"lw\":[678.9461506009102,708.5966667681932],\"rh\":[417.5479191765189,690.0905972868204],\"rk\":[426.80095391720533,1025.513106636703],\"ra\":[431.42747128754854,1314.6704422831535],\"lh\":[588.7290618792176,692.403855971992],\"lk\":[616.4881661012769,1025.513106636703],\"la\":[660.4400811195374,1319.2969596534967]},\"flips\":{},\"depthMode\":\"planar\"},\"portraitState\":{\"activeSlots\":[1],\"savedPeople\":{\"1\":{\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"pelvis\":[0,0,-0.7742201649280657],\"spine_01\":[-10.132840069342643,-0.1551437155583583,0.571007464617778],\"spine_02\":[6.447897080844318,9.752557214023843e-18,-1.5823480729261747e-16],\"spine_03\":[0.9813540660457247,-9.245390924172995e-19,7.339010525772364e-17],\"thigh_l\":[5.044530617531585,0.5642655715721381,1.6809955397015668],\"thigh_r\":[4.727672140341025,0.44206596528295294,5.816604250420229],\"calf_l\":[-10.64532135033363,-1.418203275226272,1.4664806966496349],\"calf_r\":[-10.06025658205921,0.6454355398797538,2.220885991655009],\"clavicle_l\":[-1.234225520042026,-8.576817653796365,3.8624970370058094],\"clavicle_r\":[-1.131254826061261,8.718555641987614,-4.676834568332787],\"neck_01\":[-2,71,2.4103450972655645],\"upperarm_l\":[4.433349302727205,2.5501917027804657,-35.44826682539225],\"upperarm_r\":[4.567026618933854,-2.6581202664317853,34.12939312473513],\"lowerarm_l\":[41.569786354650574,18.95348955734197,-17.83721202581091],\"lowerarm_r\":[41.675558275605546,-18.69275525751145,17.98532253954948]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[-0.0602046753306602,-0.28728336339398197,-0.36393853034637946],\"hand_l\":[2.667000207282817,-0.8947917979747775,-0.3615097289370145],\"hand_r\":[-2.989397726165543,-0.8230192665623246,-0.3625196564297527],\"foot_l\":[2.509355508275047,-10.652544649446758,-0.3531515829808996],\"foot_r\":[-1.224695749639552,-10.687017576072055,-0.3531515829808986],\"head\":[0.42676763331640055,7.551136966277822,-0.6952772144340348],\"upperarm_l\":[2.0029478465853017,5.148664198209413,-0.36150972893701455],\"upperarm_r\":[-2.075702042638733,5.186502257899696,-0.36251965642974965]},\"poleTargetPositions\":{\"leftArm\":[1.738723672153213,0.9028833677225907,0.09424574673175812],\"rightArm\":[-1.801851977040729,0.9454873079220885,0.09424574673175812],\"leftLeg\":[1.2006802076168615,-4.1052601231205,0.09424574673175812],\"rightLeg\":[-0.8276718509393876,-4.0907427550585265,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":-2.896661352055504,\"y\":-0.3114554360655418,\"z\":-0.5054213495406765,\"zoom\":1.3569247831472113},\"openpose\":{\"key\":\"photo\",\"name\":\"01_character_A.png\",\"points\":{\"head\":[500.82523184269667,167.29413443803787],\"neck\":[504.2951198704541,332.69213042780757],\"rs\":[373.59600415825844,331.53550108522177],\"re\":[325.01757176965475,532.7890066951513],\"rw\":[313.45127834379673,708.5966667681932],\"ls\":[634.9942355826497,333.8487597703934],\"le\":[674.319633230567,535.1022653803229],\"lw\":[678.9461506009102,708.5966667681932],\"rh\":[417.5479191765189,690.0905972868204],\"rk\":[426.80095391720533,1025.513106636703],\"ra\":[431.42747128754854,1314.6704422831535],\"lh\":[588.7290618792176,692.403855971992],\"lk\":[616.4881661012769,1025.513106636703],\"la\":[660.4400811195374,1319.2969596534967]},\"flips\":{},\"depthMode\":\"planar\"}},\"2\":{\"mesh\":{\"age\":25,\"gender\":0.5,\"weight\":0.5,\"muscle\":0.5,\"height\":0.5,\"breast_size\":0,\"firmness\":0.5,\"show_genitals\":false},\"pose\":{\"bones\":{\"spine_01\":[-10.133881952509862,0,0],\"spine_02\":[6.44789708084431,0,0],\"spine_03\":[1.9817494222949084,0,0],\"thigh_l\":[5.07117002413439,0.2105161294981653,-0.9736716381794965],\"thigh_r\":[5.07117002413439,-0.2105161294981653,0.9736716381794965],\"calf_l\":[-9.594192071434588,-0.08339897169080071,-5.036378046046619],\"calf_r\":[-9.594192071434588,0.08339897169080071,5.036378046046619],\"clavicle_l\":[-1.1829508656851622,-8.64780750975099,4.269838977517809],\"clavicle_r\":[-1.1829508656851622,8.64780750975099,-4.269838977517809],\"neck_01\":[6.843909162558707,0,0],\"upperarm_l\":[2.0197112294006057,1.4242838124548483,-38.80123253309387],\"upperarm_r\":[-0.992408417231223,5.265702179457993,-57.73374671195927],\"lowerarm_l\":[32.63325170320422,21.816110385382984,-11.076966078316117],\"lowerarm_r\":[-37.25041828770651,-31.52725644960111,-58.052396520620924]},\"bonePositions\":{\"Root\":[0,-8.178140640258789,-0.2576471269130707]},\"modelRotation\":[0,0,0],\"ikEffectorPositions\":{\"pelvis\":[9.045776960280882,-1.3054032501907127,-0.37801318788518895],\"hand_l\":[11.484406562567328,-1.833403344064362,0.10648865313851191],\"hand_r\":[4.1289570836350205,7.02607452382437,0.44971323271931807],\"foot_l\":[10.524121229322255,-10.702718159368207,-0.46167982601478325],\"foot_r\":[7.567432691239511,-10.702718159368207,-0.46167982601478325],\"head\":[9.045776960280882,5.713040642232185,-0.15894453467641145],\"upperarm_l\":[10.88614977550996,3.6097979525195285,-0.3299581617219193],\"upperarm_r\":[7.205404145051805,3.6097979525195285,-0.3299581617219193]},\"poleTargetPositions\":{\"leftArm\":[1.6197583989648365,0.8971776013367656,0.13422527719606023],\"rightArm\":[-3.2466149312370796,3.414282723878599,0.5087486261931402],\"leftLeg\":[1.0891264434220527,-4.100259295229385,0.09424574673175812],\"rightLeg\":[-1.0891264434220527,-4.100259295229385,0.09424574673175812]},\"hipBonePosition\":{\"hips\":[0,7.445617198944092,0.3518928736448288]}},\"proportions\":{\"head\":1,\"neck\":1,\"shoulder\":1,\"spine\":1,\"upper_arm\":1,\"forearm\":1,\"thigh\":1,\"shin\":1},\"transform\":{\"x\":9.044276739639967,\"y\":-0.3114554360655418,\"z\":-0.5054213495406765,\"zoom\":1.3569247831472113},\"openpose\":null,\"grips\":{\"l\":0,\"r\":0}}}},\"referenceMode\":\"separate\",\"swapPeople\":false,\"outputSkeleton\":true,\"autoFit\":true,\"systemPrompt\":\"Draw character from image2. Repose the person in image2 to match image1. including the head direction.\\nPreserve their appearance and the scene.\\nThe colored skeleton lines and joint markers in image1 are pose guides only; omit them from the finished image.\",\"width\":1024,\"height\":1024,\"framing\":{\"zoom\":1,\"offsetX\":0,\"offsetY\":0},\"camera\":{\"yaw\":0,\"pitch\":0},\"poseReferenceFile\":{\"filename\":\"pose_13af265fb19d93633729c.png\",\"subfolder\":\"fisher_pose\",\"type\":\"input\"}}",
+        "Edit pose & camera": null,
+        "Generation history & comparison": null
+      },
+      "color": "#2f6664",
+      "bgcolor": "#203b3c"
+    },
+    {
+      "id": 7,
+      "type": "KSampler",
+      "pos": [
+        1520,
+        210
+      ],
+      "size": [
+        360,
+        474
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 2
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "title": "Front view · pose generation",
+      "properties": {
+        "Node name for S&R": "KSampler",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        20260930,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 20260930,
+        "control_after_generate": "fixed",
+        "steps": 25,
+        "cfg": 1,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1
+      },
+      "color": "#786244",
+      "bgcolor": "#3e3528"
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        1525.7308934338,
+        582.3588379037649
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            15,
+            16,
+            29,
+            45,
+            50,
+            55
+          ]
+        }
+      ],
+      "title": "正面图像 · VAE 解码",
+      "properties": {
+        "Node name for S&R": "VAEDecode",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "color": "#786244",
+      "bgcolor": "#3e3528"
+    },
+    {
+      "id": 12,
+      "type": "LoadBackgroundRemovalModel",
+      "pos": [
+        40.05209425052776,
+        939.1919925459657
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 4,
+      "mode": 2,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "bg_model",
+          "type": "BACKGROUND_REMOVAL",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "title": "BiRefNet",
+      "properties": {
+        "Node name for S&R": "LoadBackgroundRemovalModel",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "birefnet.safetensors"
+      ],
+      "widgets_values_named": {
+        "bg_removal_name": "birefnet.safetensors"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 13,
+      "type": "RemoveBackground",
+      "pos": [
+        560,
+        1110
+      ],
+      "size": [
+        340,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 24,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "bg_removal_model",
+          "type": "BACKGROUND_REMOVAL",
+          "link": 14
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "title": "01 · remove background",
+      "properties": {
+        "Node name for S&R": "RemoveBackground",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "color": "#4b566f",
+      "bgcolor": "#2b3244"
+    },
+    {
+      "id": 14,
+      "type": "TripoSplatPreprocessImage",
+      "pos": [
+        560,
+        1300
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 26,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 16
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "title": "02 · subject pre-process",
+      "properties": {
+        "Node name for S&R": "TripoSplatPreprocessImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        1,
+        1024
+      ],
+      "widgets_values_named": {
+        "erode_radius": 1,
+        "size": 1024
+      },
+      "color": "#4b566f",
+      "bgcolor": "#2b3244"
+    },
+    {
+      "id": 15,
+      "type": "CLIPVisionLoader",
+      "pos": [
+        40.05209425052776,
+        1079.1919925459663
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 5,
+      "mode": 2,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP_VISION",
+          "type": "CLIP_VISION",
+          "links": [
+            18
+          ]
+        }
+      ],
+      "title": "DINOv3 · vision",
+      "properties": {
+        "Node name for S&R": "CLIPVisionLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "dino_v3_vit_h.safetensors"
+      ],
+      "widgets_values_named": {
+        "clip_name": "dino_v3_vit_h.safetensors"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 16,
+      "type": "VAELoader",
+      "pos": [
+        40.05209425052776,
+        1219.1919925459658
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 6,
+      "mode": 2,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "title": "Flux2 · rebuild VAE",
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "flux2-vae.safetensors"
+      ],
+      "widgets_values_named": {
+        "vae_name": "flux2-vae.safetensors"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 17,
+      "type": "TripoSplatConditioning",
+      "pos": [
+        560,
+        1560
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 27,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": 18
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 19
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            22
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            23
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            24
+          ]
+        }
+      ],
+      "title": "03 · rebuild condition",
+      "properties": {
+        "Node name for S&R": "TripoSplatConditioning",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "color": "#4b566f",
+      "bgcolor": "#2b3244"
+    },
+    {
+      "id": 18,
+      "type": "UNETLoader",
+      "pos": [
+        40.05209425052776,
+        1359.1919925459647
+      ],
+      "size": [
+        360,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 7,
+      "mode": 2,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "title": "TripoSplat · 3d rebuild model",
+      "properties": {
+        "Node name for S&R": "UNETLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "triposplat_fp16.safetensors",
+        "default"
+      ],
+      "widgets_values_named": {
+        "unet_name": "triposplat_fp16.safetensors",
+        "weight_dtype": "default"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 19,
+      "type": "KSampler",
+      "pos": [
+        980,
+        1110
+      ],
+      "size": [
+        340,
+        310
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 28,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 21
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 22
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 23
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            25,
+            60
+          ]
+        }
+      ],
+      "title": "04 · TripoSplat Sampling",
+      "properties": {
+        "Node name for S&R": "KSampler",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        46,
+        "fixed",
+        20,
+        3,
+        "dpmpp_2m",
+        "simple",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 46,
+        "control_after_generate": "fixed",
+        "steps": 20,
+        "cfg": 3,
+        "sampler_name": "dpmpp_2m",
+        "scheduler": "simple",
+        "denoise": 1
+      },
+      "color": "#4b566f",
+      "bgcolor": "#2b3244"
+    },
+    {
+      "id": 20,
+      "type": "VAELoader",
+      "pos": [
+        40.05209425052776,
+        1519.1919925459647
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 8,
+      "mode": 2,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "title": "TripoSplat · decode VAE",
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "triposplat_vae_decoder_fp16.safetensors"
+      ],
+      "widgets_values_named": {
+        "vae_name": "triposplat_vae_decoder_fp16.safetensors"
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 21,
+      "type": "VAEDecodeTripoSplat",
+      "pos": [
+        980,
+        1560
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 29,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 25
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "splat",
+          "type": "SPLAT",
+          "links": [
+            27
+          ]
+        }
+      ],
+      "title": "05 · 3d gaussian decode",
+      "properties": {
+        "Node name for S&R": "VAEDecodeTripoSplat",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        262144,
+        0,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "num_gaussians": 262144,
+        "seed": 0,
+        "control_after_generate": "fixed"
+      },
+      "color": "#4b566f",
+      "bgcolor": "#2b3244"
+    },
+    {
+      "id": 22,
+      "type": "FisherAnyAngleCamera",
+      "pos": [
+        1440,
+        1110
+      ],
+      "size": [
+        340,
+        310
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 30,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "splat",
+          "type": "SPLAT",
+          "link": 27
+        },
+        {
+          "name": "pose_json",
+          "type": "STRING",
+          "link": 53
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 29
+        },
+        {
+          "name": "camera_latent",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 60
+        }
+      ],
+      "outputs": [
+        {
+          "name": "粗渲染",
+          "type": "IMAGE",
+          "links": [
+            51
+          ]
+        },
+        {
+          "name": "AnyAngle提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "camera_info",
+          "type": "LOAD3D_CAMERA",
+          "links": null
+        }
+      ],
+      "title": "06 · new camera angle rendering",
+      "properties": {
+        "Node name for S&R": "FisherAnyAngleCamera",
+        "aux_id": "Work-Fisher/ComfyUI-Fisher-Pose",
+        "ver": "f9505b2385bccb168304c1c4d9987ef9e3df37bb"
+      },
+      "color": "#655880",
+      "bgcolor": "#372f49"
+    },
+    {
+      "id": 24,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        40.05209425052776,
+        1659.1919925459647
+      ],
+      "size": [
+        360,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 20,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 63
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            37
+          ]
+        }
+      ],
+      "title": "AnyAngle · Camera Angle LoRA",
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "QI2.1_AnyAngle.safetensors",
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "QI2.1_AnyAngle.safetensors",
+        "strength_model": 1
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 25,
+      "type": "FisherAnyAngleEncode",
+      "pos": [
+        1440,
+        1560
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 31,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 48
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 49
+        },
+        {
+          "name": "front_image",
+          "type": "IMAGE",
+          "link": 50
+        },
+        {
+          "name": "camera_image",
+          "type": "IMAGE",
+          "link": 51
+        }
+      ],
+      "outputs": [
+        {
+          "name": "正向",
+          "type": "CONDITIONING",
+          "links": [
+            38
+          ]
+        },
+        {
+          "name": "负向",
+          "type": "CONDITIONING",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "title": "07 · AnyAngle condition",
+      "properties": {
+        "Node name for S&R": "FisherAnyAngleEncode",
+        "aux_id": "Work-Fisher/ComfyUI-Fisher-Pose",
+        "ver": "93f20bc7a77533da57bec685a0974f81c3f814b1"
+      },
+      "widgets_values": [
+        0
+      ],
+      "widgets_values_named": {
+        "resolution": 0
+      },
+      "color": "#655880",
+      "bgcolor": "#372f49"
+    },
+    {
+      "id": 26,
+      "type": "KSampler",
+      "pos": [
+        1850,
+        1110
+      ],
+      "size": [
+        310,
+        310
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 32,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 37
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 38
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 39
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            41
+          ]
+        }
+      ],
+      "title": "08 · new camera angle sampling",
+      "properties": {
+        "Node name for S&R": "KSampler",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        42,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 42,
+        "control_after_generate": "fixed",
+        "steps": 25,
+        "cfg": 1,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1
+      },
+      "color": "#655880",
+      "bgcolor": "#372f49"
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        2220,
+        1110
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 33,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 41
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 42
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            46
+          ]
+        }
+      ],
+      "title": "09 · new camera angle VAE decode",
+      "properties": {
+        "Node name for S&R": "VAEDecode",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "color": "#655880",
+      "bgcolor": "#372f49"
+    },
+    {
+      "id": 28,
+      "type": "SaveImage",
+      "pos": [
+        2000,
+        430
+      ],
+      "size": [
+        520,
+        440
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 47
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "title": "Final image preview and save",
+      "properties": {
+        "Node name for S&R": "SaveImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "Fisher-Pose/%date:yyyyMMdd_hhmmss%"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "Fisher-Pose/%date:yyyyMMdd_hhmmss%"
+      },
+      "color": "#39654f",
+      "bgcolor": "#243b30"
+    },
+    {
+      "id": 29,
+      "type": "FisherPoseResult",
+      "pos": [
+        2000,
+        210
+      ],
+      "size": [
+        520,
+        120
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pose_json",
+          "type": "STRING",
+          "link": 54
+        },
+        {
+          "name": "front_image",
+          "type": "IMAGE",
+          "link": 45
+        },
+        {
+          "name": "camera_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 46
+        }
+      ],
+      "outputs": [
+        {
+          "name": "最终图像",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            47
+          ]
+        }
+      ],
+      "title": "select final output based on camera angle",
+      "properties": {
+        "Node name for S&R": "FisherPoseResult",
+        "aux_id": "Work-Fisher/ComfyUI-Fisher-Pose",
+        "ver": "93f20bc7a77533da57bec685a0974f81c3f814b1"
+      },
+      "color": "#39654f",
+      "bgcolor": "#243b30"
+    },
+    {
+      "id": 30,
+      "type": "FisherShot",
+      "pos": [
+        1000,
+        770
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pose_json",
+          "type": "STRING",
+          "link": 52
+        },
+        {
+          "name": "enable_camera",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "enable_camera"
+          },
+          "link": 56
+        }
+      ],
+      "outputs": [
+        {
+          "name": "姿势与镜头",
+          "type": "STRING",
+          "links": [
+            53,
+            54
+          ]
+        }
+      ],
+      "title": "Camera Data · auto save",
+      "properties": {
+        "Node name for S&R": "FisherShot",
+        "aux_id": "Work-Fisher/ComfyUI-Fisher-Pose",
+        "ver": "93f20bc7a77533da57bec685a0974f81c3f814b1"
+      },
+      "widgets_values": [
+        "{\"anyAngle\":{\"enabled\":true,\"yaw\":6.681829833984378,\"pitch\":-0.4545440673828125,\"zoom\":0.97034737864025,\"offsetX\":-0.04439460874123825,\"offsetY\":-0.1460537481488842,\"camera\":{\"position\":[0.25423630716673573,-0.027536645116599798,2.14848807269645],\"forward\":[-0.11635210627371413,0.00793320735511618,-0.9931763446572472],\"fov\":30,\"zoom\":0.97034737864025,\"aspect\":1}},\"shotPreviewFile\":{\"filename\":\"shot_fcfbe51a28a7d3d610c7a.png\",\"subfolder\":\"fisher_pose\",\"type\":\"input\"}}",
+        true
+      ],
+      "widgets_values_named": {
+        "shot_json": "{\"anyAngle\":{\"enabled\":true,\"yaw\":6.681829833984378,\"pitch\":-0.4545440673828125,\"zoom\":0.97034737864025,\"offsetX\":-0.04439460874123825,\"offsetY\":-0.1460537481488842,\"camera\":{\"position\":[0.25423630716673573,-0.027536645116599798,2.14848807269645],\"forward\":[-0.11635210627371413,0.00793320735511618,-0.9931763446572472],\"fov\":30,\"zoom\":0.97034737864025,\"aspect\":1}},\"shotPreviewFile\":{\"filename\":\"shot_fcfbe51a28a7d3d610c7a.png\",\"subfolder\":\"fisher_pose\",\"type\":\"input\"}}",
+        "enable_camera": true
+      },
+      "color": "#2f6664",
+      "bgcolor": "#203b3c"
+    },
+    {
+      "id": 31,
+      "type": "PreviewImage",
+      "pos": [
+        1531.4617868675998,
+        703.7043707347659
+      ],
+      "size": [
+        347.88587339606374,
+        258
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "title": "Front video preview",
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "color": "#786244",
+      "bgcolor": "#3e3528"
+    },
+    {
+      "id": 32,
+      "type": "PrimitiveBoolean",
+      "pos": [
+        533.3531776901704,
+        -75.52569623239067
+      ],
+      "size": [
+        427.7921696661298,
+        98.23493993929634
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": [
+            56
+          ]
+        }
+      ],
+      "title": "Multi-Angle Switch · Off=Pose only / On=Full pipeline",
+      "properties": {
+        "Node name for S&R": "PrimitiveBoolean",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0",
+        "fisherControl": "enable_camera"
+      },
+      "widgets_values": [
+        false
+      ],
+      "widgets_values_named": {
+        "value": false
+      },
+      "color": "#455b80",
+      "bgcolor": "#28354b"
+    },
+    {
+      "id": 33,
+      "type": "PrimitiveInt",
+      "pos": [
+        1035.343593075516,
+        -50.27046543073438
+      ],
+      "size": [
+        324.3421071542598,
+        82
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            57
+          ]
+        }
+      ],
+      "title": "multiple=16",
+      "properties": {
+        "Node name for S&R": "PrimitiveInt",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0",
+        "fisherControl": "width"
+      },
+      "widgets_values": [
+        1024,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "value": 1024,
+        "control_after_generate": "fixed"
+      },
+      "color": "#455b80",
+      "bgcolor": "#28354b"
+    },
+    {
+      "id": 34,
+      "type": "PrimitiveInt",
+      "pos": [
+        1418.7499820345324,
+        -45.46051780583081
+      ],
+      "size": [
+        331.2894786010754,
+        82
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            58
+          ]
+        }
+      ],
+      "title": "multiple=16",
+      "properties": {
+        "Node name for S&R": "PrimitiveInt",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0",
+        "fisherControl": "height"
+      },
+      "widgets_values": [
+        1024,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "value": 1024,
+        "control_after_generate": "fixed"
+      },
+      "color": "#455b80",
+      "bgcolor": "#28354b"
+    },
+    {
+      "id": 35,
+      "type": "LoadImage",
+      "pos": [
+        560,
+        585
+      ],
+      "size": [
+        340,
+        325
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "title": "Person 2",
+      "properties": {
+        "Node name for S&R": "LoadImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0",
+        "guhaiImageValue": "person_2.png"
+      },
+      "widgets_values": [
+        "person_2.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "person_2.png",
+        "upload": "image"
+      },
+      "color": "#325c79",
+      "bgcolor": "#233744"
+    },
+    {
+      "id": 36,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        44.887165420419976,
+        128.29386655145302
+      ],
+      "size": [
+        360,
+        100
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 17,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            62,
+            63
+          ]
+        }
+      ],
+      "title": "Corrective Lora",
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "cnr_id": "comfy-core",
+        "ver": "0.36.0"
+      },
+      "widgets_values": [
+        "QWEN-2.1-Unchained-V1.safetensors",
+        1
+      ],
+      "widgets_values_named": {
+        "lora_name": "QWEN-2.1-Unchained-V1.safetensors",
+        "strength_model": 1
+      },
+      "color": "#344254",
+      "bgcolor": "#242d3b"
+    },
+    {
+      "id": 37,
+      "type": "Label (rgthree)",
+      "pos": [
+        3.7611853663071795,
+        -610.0978409335311
+      ],
+      "size": [
+        1450.5615234375,
+        150
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "YouTube: JunkunStudio",
+      "properties": {
+        "fontSize": 150,
+        "fontFamily": "san",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.0.1"
+        },
+        "widget_ue_connectable": {}
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 38,
+      "type": "Label (rgthree)",
+      "pos": [
+        2.0097205225571777,
+        -438.75386205169497
+      ],
+      "size": [
+        2309.6923828125,
+        150
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Qwen Image2.1 Any Pose & Angle",
+      "properties": {
+        "fontSize": 150,
+        "fontFamily": "Arial",
+        "fontColor": "#DE612C",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "widget_ue_connectable": {}
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 39,
+      "type": "Label (rgthree)",
+      "pos": [
+        12.088788334312742,
+        -254.27966474670475
+      ],
+      "size": [
+        2365.546875,
+        80
+      ],
+      "flags": {
+        "allow_interaction": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "The original node and workflow was from Fisher, big thanks to him.",
+      "properties": {
+        "fontSize": 80,
+        "fontFamily": "Arial",
+        "fontColor": "#ffffff",
+        "textAlign": "left",
+        "backgroundColor": "transparent",
+        "padding": 0,
+        "borderRadius": 0,
+        "angle": 0,
+        "widget_ue_connectable": {}
+      },
+      "color": "#fff0",
+      "bgcolor": "#fff0"
+    },
+    {
+      "id": 40,
+      "type": "ResolutionSelector",
+      "pos": [
+        1886.470245184002,
+        -120.35626161257598
+      ],
+      "size": [
+        270,
+        150
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ResolutionSelector"
+      },
+      "widgets_values": [
+        "1:1 (Square)",
+        1,
+        8
+      ],
+      "widgets_values_named": {
+        "aspect_ratio": "1:1 (Square)",
+        "megapixels": 1,
+        "multiple": 8
+      }
+    }
+  ],
+  "links": [
+    [
+      2,
+      2,
+      0,
+      7,
+      0,
+      "MODEL"
+    ],
+    [
+      3,
+      3,
+      0,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      4,
+      0,
+      6,
+      1,
+      "VAE"
+    ],
+    [
+      5,
+      5,
+      0,
+      6,
+      2,
+      "IMAGE"
+    ],
+    [
+      6,
+      6,
+      0,
+      7,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      6,
+      1,
+      7,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      6,
+      2,
+      7,
+      3,
+      "LATENT"
+    ],
+    [
+      9,
+      7,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      10,
+      4,
+      0,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      14,
+      12,
+      0,
+      13,
+      0,
+      "BACKGROUND_REMOVAL"
+    ],
+    [
+      15,
+      8,
+      0,
+      13,
+      1,
+      "IMAGE"
+    ],
+    [
+      16,
+      8,
+      0,
+      14,
+      0,
+      "IMAGE"
+    ],
+    [
+      17,
+      13,
+      0,
+      14,
+      1,
+      "MASK"
+    ],
+    [
+      18,
+      15,
+      0,
+      17,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      19,
+      16,
+      0,
+      17,
+      1,
+      "VAE"
+    ],
+    [
+      20,
+      14,
+      0,
+      17,
+      2,
+      "IMAGE"
+    ],
+    [
+      21,
+      18,
+      0,
+      19,
+      0,
+      "MODEL"
+    ],
+    [
+      22,
+      17,
+      0,
+      19,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      23,
+      17,
+      1,
+      19,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      24,
+      17,
+      2,
+      19,
+      3,
+      "LATENT"
+    ],
+    [
+      25,
+      19,
+      0,
+      21,
+      0,
+      "LATENT"
+    ],
+    [
+      26,
+      20,
+      0,
+      21,
+      1,
+      "VAE"
+    ],
+    [
+      27,
+      21,
+      0,
+      22,
+      0,
+      "SPLAT"
+    ],
+    [
+      29,
+      8,
+      0,
+      22,
+      2,
+      "IMAGE"
+    ],
+    [
+      37,
+      24,
+      0,
+      26,
+      0,
+      "MODEL"
+    ],
+    [
+      38,
+      25,
+      0,
+      26,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      39,
+      25,
+      1,
+      26,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      40,
+      25,
+      2,
+      26,
+      3,
+      "LATENT"
+    ],
+    [
+      41,
+      26,
+      0,
+      27,
+      0,
+      "LATENT"
+    ],
+    [
+      42,
+      4,
+      0,
+      27,
+      1,
+      "VAE"
+    ],
+    [
+      45,
+      8,
+      0,
+      29,
+      1,
+      "IMAGE"
+    ],
+    [
+      46,
+      27,
+      0,
+      29,
+      2,
+      "IMAGE"
+    ],
+    [
+      47,
+      29,
+      0,
+      28,
+      0,
+      "IMAGE"
+    ],
+    [
+      48,
+      3,
+      0,
+      25,
+      0,
+      "CLIP"
+    ],
+    [
+      49,
+      4,
+      0,
+      25,
+      1,
+      "VAE"
+    ],
+    [
+      50,
+      8,
+      0,
+      25,
+      2,
+      "IMAGE"
+    ],
+    [
+      51,
+      22,
+      0,
+      25,
+      3,
+      "IMAGE"
+    ],
+    [
+      52,
+      6,
+      5,
+      30,
+      0,
+      "STRING"
+    ],
+    [
+      53,
+      30,
+      0,
+      22,
+      1,
+      "STRING"
+    ],
+    [
+      54,
+      30,
+      0,
+      29,
+      0,
+      "STRING"
+    ],
+    [
+      55,
+      8,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      57,
+      33,
+      0,
+      6,
+      4,
+      "INT"
+    ],
+    [
+      58,
+      34,
+      0,
+      6,
+      5,
+      "INT"
+    ],
+    [
+      56,
+      32,
+      0,
+      30,
+      1,
+      "BOOLEAN"
+    ],
+    [
+      60,
+      19,
+      0,
+      22,
+      3,
+      "LATENT"
+    ],
+    [
+      61,
+      1,
+      0,
+      36,
+      0,
+      "MODEL"
+    ],
+    [
+      62,
+      36,
+      0,
+      2,
+      0,
+      "MODEL"
+    ],
+    [
+      63,
+      36,
+      0,
+      24,
+      0,
+      "MODEL"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "01  Load Models",
+      "bounding": [
+        9.493391186865106,
+        -155.9799358585546,
+        452.01015522066746,
+        1936.0155254003084
+      ],
+      "color": "#526781",
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "02  Human Inputs",
+      "bounding": [
+        520,
+        100,
+        420,
+        850
+      ],
+      "color": "#457b9c",
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "03  Pose And  Camera",
+      "bounding": [
+        960,
+        100,
+        480,
+        850
+      ],
+      "color": "#408782",
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "04  Front View",
+      "bounding": [
+        1480,
+        100,
+        440,
+        850
+      ],
+      "color": "#9b7c4f",
+      "flags": {}
+    },
+    {
+      "id": 5,
+      "title": "07  Final Output",
+      "bounding": [
+        1960,
+        100,
+        600,
+        850
+      ],
+      "color": "#4e8e6d",
+      "flags": {}
+    },
+    {
+      "id": 6,
+      "title": "Rebuild Subject",
+      "bounding": [
+        520,
+        1000,
+        840,
+        780
+      ],
+      "color": "#657596",
+      "flags": {}
+    },
+    {
+      "id": 7,
+      "title": "New Camera Angle",
+      "bounding": [
+        1400,
+        1000,
+        1160,
+        780
+      ],
+      "color": "#8572a8",
+      "flags": {}
+    },
+    {
+      "id": 8,
+      "title": "00  Generation Control · width and height only change the output，not the size of mannequin",
+      "bounding": [
+        520,
+        -160,
+        1300,
+        210
+      ],
+      "color": "#577cac",
+      "flags": {}
+    },
+    {
+      "id": 9,
+      "title": "output width",
+      "bounding": [
+        1025.3435930755163,
+        -120.27046543073439,
+        349.5526357393717,
+        159.8026249600906
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 10,
+      "title": "output height",
+      "bounding": [
+        1408.7499820345324,
+        -115.4605178058308,
+        363.013167917577,
+        155.46051780583082
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6345195000341551,
+      "offset": [
+        289.6309813665664,
+        481.35283131317044
+      ]
+    },
+    "reroutes": [
+      {
+        "id": 1,
+        "pos": [
+          500,
+          728
+        ],
+        "linkIds": [
+          10
+        ]
+      },
+      {
+        "id": 2,
+        "parentId": 1,
+        "pos": [
+          500,
+          920
+        ],
+        "linkIds": [
+          10
+        ]
+      },
+      {
+        "id": 3,
+        "parentId": 2,
+        "pos": [
+          1490,
+          920
+        ],
+        "linkIds": [
+          10
+        ]
+      },
+      {
+        "id": 4,
+        "parentId": 3,
+        "pos": [
+          1490,
+          618
+        ],
+        "linkIds": [
+          10
+        ]
+      },
+      {
+        "id": 5,
+        "pos": [
+          1900,
+          598
+        ],
+        "linkIds": [
+          15
+        ]
+      },
+      {
+        "id": 6,
+        "parentId": 5,
+        "pos": [
+          1900,
+          960
+        ],
+        "linkIds": [
+          15
+        ]
+      },
+      {
+        "id": 7,
+        "parentId": 6,
+        "pos": [
+          540,
+          960
+        ],
+        "linkIds": [
+          15
+        ]
+      },
+      {
+        "id": 8,
+        "parentId": 7,
+        "pos": [
+          540,
+          1148
+        ],
+        "linkIds": [
+          15
+        ]
+      },
+      {
+        "id": 9,
+        "pos": [
+          1910,
+          598
+        ],
+        "linkIds": [
+          16
+        ]
+      },
+      {
+        "id": 10,
+        "parentId": 9,
+        "pos": [
+          1910,
+          974
+        ],
+        "linkIds": [
+          16
+        ]
+      },
+      {
+        "id": 11,
+        "parentId": 10,
+        "pos": [
+          530,
+          974
+        ],
+        "linkIds": [
+          16
+        ]
+      },
+      {
+        "id": 12,
+        "parentId": 11,
+        "pos": [
+          530,
+          1308
+        ],
+        "linkIds": [
+          16
+        ]
+      },
+      {
+        "id": 15,
+        "pos": [
+          21.10279011043884,
+          289.3788677798565
+        ],
+        "linkIds": [
+          63
+        ]
+      },
+      {
+        "id": 16,
+        "parentId": 15,
+        "pos": [
+          21.10279011043884,
+          1567.378867779856
+        ],
+        "linkIds": [
+          63
+        ]
+      },
+      {
+        "id": 17,
+        "pos": [
+          421.0500032103334,
+          1739.1230376137084
+        ],
+        "linkIds": [
+          37
+        ]
+      },
+      {
+        "id": 18,
+        "parentId": 17,
+        "pos": [
+          489.28856391581974,
+          1748.0792005100484
+        ],
+        "linkIds": [
+          37
+        ]
+      },
+      {
+        "id": 19,
+        "parentId": 18,
+        "pos": [
+          1822.3115308918045,
+          1752.7129966638931
+        ],
+        "linkIds": [
+          37
+        ]
+      },
+      {
+        "id": 20,
+        "parentId": 19,
+        "pos": [
+          1820,
+          1118
+        ],
+        "linkIds": [
+          37
+        ]
+      },
+      {
+        "id": 21,
+        "pos": [
+          490,
+          728
+        ],
+        "linkIds": [
+          42
+        ]
+      },
+      {
+        "id": 22,
+        "parentId": 21,
+        "pos": [
+          490,
+          986
+        ],
+        "linkIds": [
+          42
+        ]
+      },
+      {
+        "id": 23,
+        "parentId": 22,
+        "pos": [
+          2190,
+          986
+        ],
+        "linkIds": [
+          42
+        ]
+      },
+      {
+        "id": 24,
+        "parentId": 23,
+        "pos": [
+          2190,
+          1138
+        ],
+        "linkIds": [
+          42
+        ]
+      },
+      {
+        "id": 25,
+        "pos": [
+          470,
+          538
+        ],
+        "linkIds": [
+          48
+        ]
+      },
+      {
+        "id": 26,
+        "parentId": 25,
+        "pos": [
+          470,
+          1470
+        ],
+        "linkIds": [
+          48
+        ]
+      },
+      {
+        "id": 27,
+        "parentId": 26,
+        "pos": [
+          1410,
+          1470
+        ],
+        "linkIds": [
+          48
+        ]
+      },
+      {
+        "id": 28,
+        "parentId": 27,
+        "pos": [
+          1410,
+          1568
+        ],
+        "linkIds": [
+          48
+        ]
+      },
+      {
+        "id": 29,
+        "pos": [
+          480,
+          728
+        ],
+        "linkIds": [
+          49
+        ]
+      },
+      {
+        "id": 30,
+        "parentId": 29,
+        "pos": [
+          480,
+          1484
+        ],
+        "linkIds": [
+          49
+        ]
+      },
+      {
+        "id": 31,
+        "parentId": 30,
+        "pos": [
+          1420,
+          1484
+        ],
+        "linkIds": [
+          49
+        ]
+      },
+      {
+        "id": 32,
+        "parentId": 31,
+        "pos": [
+          1420,
+          1588
+        ],
+        "linkIds": [
+          49
+        ]
+      },
+      {
+        "id": 33,
+        "pos": [
+          1930,
+          598
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 34,
+        "parentId": 33,
+        "pos": [
+          1930,
+          1040
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 35,
+        "parentId": 42,
+        "pos": [
+          1430,
+          1460
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 36,
+        "parentId": 35,
+        "pos": [
+          1430,
+          1608
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 37,
+        "pos": [
+          1420,
+          778
+        ],
+        "linkIds": [
+          54
+        ]
+      },
+      {
+        "id": 38,
+        "parentId": 37,
+        "pos": [
+          1420,
+          160
+        ],
+        "linkIds": [
+          54
+        ]
+      },
+      {
+        "id": 39,
+        "parentId": 38,
+        "pos": [
+          1970,
+          160
+        ],
+        "linkIds": [
+          54
+        ]
+      },
+      {
+        "id": 40,
+        "parentId": 39,
+        "pos": [
+          1973.8207122178585,
+          218.95517805446465
+        ],
+        "linkIds": [
+          54
+        ]
+      },
+      {
+        "id": 41,
+        "parentId": 34,
+        "pos": [
+          1810,
+          1040
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 42,
+        "parentId": 41,
+        "pos": [
+          1810,
+          1460
+        ],
+        "linkIds": [
+          50
+        ]
+      },
+      {
+        "id": 43,
+        "pos": [
+          980,
+          -50
+        ],
+        "linkIds": [
+          56
+        ]
+      },
+      {
+        "id": 44,
+        "parentId": 43,
+        "pos": [
+          975.8046994617868,
+          906.0156221958185
+        ],
+        "linkIds": [
+          56
+        ]
+      }
+    ],
+    "frontendVersion": "1.57.6",
+    "linkExtensions": [
+      {
+        "id": 10,
+        "parentId": 4
+      },
+      {
+        "id": 15,
+        "parentId": 8
+      },
+      {
+        "id": 16,
+        "parentId": 12
+      },
+      {
+        "id": 37,
+        "parentId": 20
+      },
+      {
+        "id": 42,
+        "parentId": 24
+      },
+      {
+        "id": 48,
+        "parentId": 28
+      },
+      {
+        "id": 49,
+        "parentId": 32
+      },
+      {
+        "id": 50,
+        "parentId": 36
+      },
+      {
+        "id": 54,
+        "parentId": 40
+      },
+      {
+        "id": 56,
+        "parentId": 44
+      },
+      {
+        "id": 63,
+        "parentId": 16
+      }
+    ],
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
